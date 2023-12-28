@@ -3,31 +3,27 @@ package database
 import (
 	"context"
 	"fmt"
-	"log"
-	"os"
-	"time"
 
+	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 	_ "github.com/joho/godotenv/autoload"
+	pgxUUID "github.com/vgarvardt/pgx-google-uuid/v5"
 )
 
-type Service interface {
-	Health() map[string]string
+type Config struct {
+	Username string `json:"username"`
+	Password string `json:"password"`
+	Host     string `json:"host"`
+	Port     string `json:"port"`
+	Database string `json:"database"`
 }
 
-type service struct {
-	db *pgxpool.Pool
-}
-
-var (
-	database = os.Getenv("DB_DATABASE")
-	password = os.Getenv("DB_PASSWORD")
-	username = os.Getenv("DB_USERNAME")
-	port     = os.Getenv("DB_PORT")
-	host     = os.Getenv("DB_HOST")
-)
-
-func New() Service {
+func generateConnStr(cfg Config) string {
+	username := cfg.Username
+	password := cfg.Password
+	host := cfg.Host
+	port := cfg.Port
+	database := cfg.Database
 	connStr := fmt.Sprintf(
 		"postgres://%s:%s@%s:%s/%s?sslmode=disable",
 		username,
@@ -36,24 +32,36 @@ func New() Service {
 		port,
 		database,
 	)
-	db, err := pgxpool.New(context.Background(), connStr)
-	if err != nil {
-		log.Fatal(err)
-	}
-	s := &service{db: db}
-	return s
+	return connStr
 }
 
-func (s *service) Health() map[string]string {
-	ctx, cancel := context.WithTimeout(context.Background(), 1*time.Second)
-	defer cancel()
-
-	_, err := s.db.Query(ctx, "SELECT 1")
+func NewPool(cfg Config) (*pgxpool.Pool, error) {
+	str := generateConnStr(cfg)
+	pgxConfig, err := pgxpool.ParseConfig(str)
 	if err != nil {
-		log.Fatalf(fmt.Sprintf("db down: %v", err))
+		return nil, err
 	}
+	pgxConfig.AfterConnect = func(_ context.Context, conn *pgx.Conn) error {
+		pgxUUID.Register(conn.TypeMap())
+		return nil
+	}
+	db, err := pgxpool.NewWithConfig(context.Background(), pgxConfig)
+	if err != nil {
+		return nil, err
+	}
+	return db, nil
+}
 
-	return map[string]string{
-		"message": "It's healthy",
+func NewConn(cfg Config) (*pgx.Conn, error) {
+	str := generateConnStr(cfg)
+	pgxConfig, err := pgx.ParseConfig(str)
+	if err != nil {
+		return nil, err
 	}
+	conn, err := pgx.ConnectConfig(context.Background(), pgxConfig)
+	if err != nil {
+		return nil, err
+	}
+	pgxUUID.Register(conn.TypeMap())
+	return conn, nil
 }
