@@ -9,13 +9,13 @@ import (
 )
 
 func (s *Server) RegisterFiberRoutes() {
-	s.f.Get("/", s.HelloWorldHandler)
+	s.F.Get("/", s.HelloWorldHandler)
 
-	s.f.Static("/js", "./cmd/web/js")
+	s.F.Static("/js", "./cmd/web/js")
 
-	s.f.Get("/web", adaptor.HTTPHandler(templ.Handler(web.HelloForm())))
+	s.F.Get("/web", adaptor.HTTPHandler(templ.Handler(web.HelloForm())))
 
-	s.f.Post("/hello", func(c *fiber.Ctx) error {
+	s.F.Post("/hello", func(c *fiber.Ctx) error {
 		return web.HelloWebHandler(c)
 	})
 	s.registerRoomsRoutes()

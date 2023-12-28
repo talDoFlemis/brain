@@ -15,7 +15,7 @@ import (
 type Server struct {
 	weaver.Implements[weaver.Main]
 
-	f *fiber.App
+	F *fiber.App
 
 	roomService weaver.Ref[rooms.Roomer]
 
@@ -23,8 +23,8 @@ type Server struct {
 }
 
 func Serve(_ context.Context, app *Server) error {
-	app.f = fiber.New()
+	app.F = fiber.New()
 	app.RegisterFiberRoutes()
-	srv := otelhttp.NewHandler(adaptor.FiberApp(app.f), "gahoot")
+	srv := otelhttp.NewHandler(adaptor.FiberApp(app.F), "gahoot")
 	return http.Serve(app.api, srv)
 }

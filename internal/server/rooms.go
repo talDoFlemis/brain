@@ -11,8 +11,8 @@ import (
 )
 
 func (s *Server) registerRoomsRoutes() {
-	s.f.Post("/rooms", s.createRoomHandler)
-	s.f.Delete("/rooms/:id", s.removeRoomHandler)
+	s.F.Post("/rooms", s.createRoomHandler)
+	s.F.Delete("/rooms/:id", s.removeRoomHandler)
 }
 
 func (s *Server) createRoomHandler(c *fiber.Ctx) error {
