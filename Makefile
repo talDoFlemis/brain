@@ -5,11 +5,13 @@ all: build
 
 build:
 	@echo "Building..."
-	@go build -o main cmd/api/main.go
+	@weaver generate ./...
+	@go build -o ./cmd/api/gahoot cmd/api/main.go
 
 # Run the application
 run:
-	@go run cmd/api/main.go
+	@weaver generate ./...
+	@SERVICEWEAVER_CONFIG=weaver.toml go run ./cmd/api/main.go
 
 # Create DB container
 docker-run:
@@ -56,4 +58,14 @@ watch:
 	    fi; \
 	fi
 
-.PHONY: all build run test clean
+# Dashboard
+dashboard:
+	@echo "Opening Dashboard..."
+	@weaver single dashboard
+
+# Migrations
+migrate:
+	@echo "Running migrations..."
+	@go run ./cmd/migrate/main.go
+
+.PHONY: all build run test clean watch dashboard migrate
