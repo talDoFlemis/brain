@@ -1,0 +1,16 @@
+[serviceweaver]
+name = "gahoot"
+binary = "./cmd/api/gahoot"
+
+[single]
+listeners.api = {address = "0.0.0.0:42069"}
+
+[multi]
+listeners.api = {address = "0.0.0.0:42069"}
+
+["github.com/taldoflemis/gahoot/internal/rooms/Repository"]
+Username = "gahoot"
+Password = "senha123"
+Host     = "localhost"
+Port     = "5432"
+Database = "gahoot"

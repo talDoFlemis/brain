@@ -27,3 +27,5 @@ tmp/
 
 *_templ.go
 main
+*_gen.go
+/cmd/api/gahoot
