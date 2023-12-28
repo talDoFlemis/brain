@@ -1,20 +1,26 @@
 package server
 
 import (
-	"github.com/taldoflemis/gahoot/internal/database"
+	"context"
+
+	"github.com/ServiceWeaver/weaver"
 	"github.com/gofiber/fiber/v2"
+
+	"github.com/taldoflemis/gahoot/internal/rooms"
 )
 
-type FiberServer struct {
-	*fiber.App
-	db database.Service
+type Server struct {
+	weaver.Implements[weaver.Main]
+
+	f *fiber.App
+
+	roomService weaver.Ref[rooms.Roomer]
+
+	api weaver.Listener `weaver:"api"`
 }
 
-func New() *FiberServer {
-	server := &FiberServer{
-		App: fiber.New(),
-		db:  database.New(),
-	}
-
-	return server
+func Serve(_ context.Context, app *Server) error {
+	app.f = fiber.New()
+	app.RegisterFiberRoutes()
+	return app.f.Listener(app.api)
 }

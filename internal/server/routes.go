@@ -1,32 +1,29 @@
 package server
 
 import (
-	"github.com/taldoflemis/gahoot/cmd/web"
 	"github.com/a-h/templ"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/adaptor"
+
+	"github.com/taldoflemis/gahoot/cmd/web"
 )
 
-func (s *FiberServer) RegisterFiberRoutes() {
-	s.Get("/", s.HelloWorldHandler)
-	s.Get("/health", s.healthHandler)
+func (s *Server) RegisterFiberRoutes() {
+	s.f.Get("/", s.HelloWorldHandler)
 
-	s.Static("/js", "./cmd/web/js")
+	s.f.Static("/js", "./cmd/web/js")
 
-	s.Get("/web", adaptor.HTTPHandler(templ.Handler(web.HelloForm())))
+	s.f.Get("/web", adaptor.HTTPHandler(templ.Handler(web.HelloForm())))
 
-	s.Post("/hello", func(c *fiber.Ctx) error {
+	s.f.Post("/hello", func(c *fiber.Ctx) error {
 		return web.HelloWebHandler(c)
 	})
+	s.registerRoomsRoutes()
 }
 
-func (s *FiberServer) HelloWorldHandler(c *fiber.Ctx) error {
+func (s *Server) HelloWorldHandler(c *fiber.Ctx) error {
 	resp := map[string]string{
 		"message": "Hello World",
 	}
 	return c.JSON(resp)
-}
-
-func (s *FiberServer) healthHandler(c *fiber.Ctx) error {
-	return c.JSON(s.db.Health())
 }

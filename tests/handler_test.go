@@ -1,18 +1,20 @@
 package tests
 
 import (
-	"github.com/taldoflemis/gahoot/internal/server"
-	"github.com/gofiber/fiber/v2"
 	"io"
 	"net/http"
 	"testing"
+
+	"github.com/gofiber/fiber/v2"
+
+	"github.com/taldoflemis/gahoot/internal/server"
 )
 
 func TestHandler(t *testing.T) {
 	// Create a Fiber app for testing
 	app := fiber.New()
 	// Inject the Fiber app into the server
-	s := &server.FiberServer{App: app}
+	s := &server.Server{App: app}
 	// Define a route in the Fiber app
 	app.Get("/", s.HelloWorldHandler)
 	// Create a test HTTP request
