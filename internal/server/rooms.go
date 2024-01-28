@@ -10,9 +10,9 @@ import (
 	"github.com/taldoflemis/gahoot/internal/rooms"
 )
 
-func (s *Server) registerRoomsRoutes() {
-	s.F.Post("/rooms", s.createRoomHandler)
-	s.F.Delete("/rooms/:id", s.removeRoomHandler)
+func (s *Server) registerRoomsRoutes(router fiber.Router) {
+	router.Post("/rooms", s.createRoomHandler)
+	router.Delete("/rooms/:id", s.removeRoomHandler)
 }
 
 func (s *Server) createRoomHandler(c *fiber.Ctx) error {
