@@ -1,0 +1,16 @@
+[book]
+authors = ["André Willyan", "Antonio Rego", "Erik Bayerlein", "Luis Costa", "Marcelo Meireles", "Said Rodrigues"]
+language = "en"
+multilingual = false
+src = "src"
+title = "Gahoot"
+
+[output.html]
+git-repository-url = "https://github.com/taldoflemis/gahoot"
+default-theme = "ayu"
+additional-js = ["mermaid.min.js", "mermaid-init.js"]
+
+[preprocessor]
+
+[preprocessor.mermaid]
+command = "mdbook-mermaid"
