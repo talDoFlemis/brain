@@ -1,14 +1,27 @@
-name: Go-test
-on: [push, pull_request]
+name: Golang CI
+
+on:
+  push:
+    branches: [ "main" ]
+    paths: ["backend/**"]
+  pull_request:
+    branches: ["main", "dev"]
+    paths: ["backend/**"]
+
+permissions:
+  contents: read
 
 jobs:
-  build:
+  ci:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./backend
 
     steps:
       - uses: actions/checkout@v4
       - name: Setup Go
-        uses: actions/setup-go@v4
+        uses: actions/setup-go@v5
         with:
           go-version: '1.21.x'
       - name: Install Templ and Weaver
@@ -17,6 +30,13 @@ jobs:
           go install github.com/ServiceWeaver/weaver/cmd/weaver@latest
       - name: Generate Go Templ
         run: templ generate
+      - name: Format Check
+        run: test -z "$(gofmt -l .)"
+      - name: Lint
+        uses: golangci/golangci-lint-action@v4
+        with:
+          version: v1.54
+          working-directory: backend
       - name: Generate Weaver files
         run: weaver generate ./...
       - name: Build
