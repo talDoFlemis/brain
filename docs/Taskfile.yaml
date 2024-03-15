@@ -1,0 +1,13 @@
+version: "3"
+
+tasks:
+  build:
+    desc: "Build the mdBook"
+    cmds:
+      - mdbook build
+
+  serve:
+    desc: "Serve the mdBook locally for preview"
+    cmds:
+      - mdbook serve -p 42069
+
