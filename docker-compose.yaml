@@ -1,0 +1,37 @@
+services:
+  frontend:
+    container_name: brain-frontend
+    build:
+      context: ./frontend/
+    ports:
+      - "3000:3000"
+    healthcheck:
+      test: wget --no-verbose --tries=1 --spider http://localhost:3000 || exit 1
+      interval: 60s
+      retries: 5
+      start_period: 20s
+      timeout: 10s
+
+  database:
+    image: postgres:16.2-alpine3.19
+    container_name: brain-database
+    environment:
+      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD:-password}"
+      POSTGRES_USER: "${POSTGRES_USER:-adminson}"
+      POSTGRES_DB: "${POSTGRES_DB:-brain}"
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "sh -c 'pg_isready -U ${POSTGRES_USER:-adminson} -d ${POSTGRES_DB:-brain}'",
+        ]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+    ports:
+      - "5432:5432"
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+
+volumes:
+  pg_data:
