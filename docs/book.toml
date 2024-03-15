@@ -3,10 +3,10 @@ authors = ["André Willyan", "Antonio Rego", "Erik Bayerlein", "Luis Costa", "Ma
 language = "en"
 multilingual = false
 src = "src"
-title = "Gahoot"
+title = "Brain.test"
 
 [output.html]
-git-repository-url = "https://github.com/taldoflemis/gahoot"
+git-repository-url = "https://github.com/taldoflemis/brain.test"
 default-theme = "ayu"
 additional-js = ["mermaid.min.js", "mermaid-init.js"]
 

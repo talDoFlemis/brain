@@ -1,0 +1,32 @@
+version: "3"
+
+tasks:
+  lint:
+    desc: "Lint"
+    cmds:
+      - npm run lint
+
+  type-check:
+    desc: "Type-check"
+    cmds:
+      - npm run type-check
+  dev:
+    desc: "Start the Next.js development server"
+    cmds:
+      - npm run dev
+
+  build:
+    desc: "Build the Next.js project"
+    cmds:
+      - npm run build
+
+  start:
+    desc: "Start the Next.js production server"
+    cmds:
+      - node .next/standalone/server.js
+
+  build-and-start:
+    desc: "Build an Start a production NextJS server"
+    cmds:
+      - task: build
+      - task: start
