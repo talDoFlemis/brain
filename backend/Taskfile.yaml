@@ -1,0 +1,17 @@
+version: "3"
+
+tasks:
+  run-web:
+    desc: "Run the web handler"
+    cmds:
+      - go run ./cmd/web
+
+  build-web:
+    desc: "Build the web handler"
+    cmds:
+      - go run ./cmd/web -o ./cmd/web/brain.test
+
+  test-light:
+    desc: "Run lighter tests"
+    cmds:
+      - go test -v ./... -short
