@@ -24,6 +24,7 @@
             govulncheck
             gotestsum
             go-swag
+            golangci-lint
           ];
         };
       });

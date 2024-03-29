@@ -9,7 +9,12 @@ tasks:
   build-web:
     desc: "Build the web handler"
     cmds:
-      - go run ./cmd/web -o ./cmd/web/brain.test
+      - go build -o brain.test ./cmd/web
+
+  lint:
+    desc: "Lint the backend"
+    cmds:
+      - golangci-lint run
 
   format:
     desc: "Format code"
