@@ -29,3 +29,6 @@ tmp/
 main
 *_gen.go
 /cmd/api/gahoot
+coverage.html
+docs/*
+!docs/docs.go
