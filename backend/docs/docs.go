@@ -44,6 +44,12 @@ const docTemplate = `{
                         "schema": {
                             "type": "string"
                         }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "schema": {
+                            "$ref": "#/definitions/web.ValidationErrorResponse"
+                        }
                     }
                 }
             },
@@ -80,6 +86,12 @@ const docTemplate = `{
                         "description": "Authentication Failed",
                         "schema": {
                             "type": "string"
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "schema": {
+                            "$ref": "#/definitions/web.ValidationErrorResponse"
                         }
                     }
                 }
@@ -137,6 +149,12 @@ const docTemplate = `{
                         "schema": {
                             "type": "string"
                         }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "schema": {
+                            "$ref": "#/definitions/web.ValidationErrorResponse"
+                        }
                     }
                 }
             }
@@ -176,6 +194,12 @@ const docTemplate = `{
                         "schema": {
                             "type": "string"
                         }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "schema": {
+                            "$ref": "#/definitions/web.ValidationErrorResponse"
+                        }
                     }
                 }
             }
@@ -185,6 +209,10 @@ const docTemplate = `{
         "web.LoginRequest": {
             "description": "Request of Login",
             "type": "object",
+            "required": [
+                "password",
+                "username"
+            ],
             "properties": {
                 "password": {
                     "description": "the password of the user",
@@ -199,6 +227,9 @@ const docTemplate = `{
         "web.RefreshTokenRequest": {
             "description": "Request of Refresh Token",
             "type": "object",
+            "required": [
+                "refresh_token"
+            ],
             "properties": {
                 "refresh_token": {
                     "description": "refresh token",
@@ -208,6 +239,11 @@ const docTemplate = `{
         },
         "web.RegisterUserRequest": {
             "type": "object",
+            "required": [
+                "email",
+                "password",
+                "username"
+            ],
             "properties": {
                 "email": {
                     "description": "the email of the user",
@@ -243,6 +279,11 @@ const docTemplate = `{
         },
         "web.UpdateAccountRequest": {
             "type": "object",
+            "required": [
+                "email",
+                "password",
+                "username"
+            ],
             "properties": {
                 "email": {
                     "description": "the password of the user",
@@ -255,6 +296,18 @@ const docTemplate = `{
                 "username": {
                     "description": "the username of the user",
                     "type": "string"
+                }
+            }
+        },
+        "web.ValidationErrorResponse": {
+            "type": "object",
+            "properties": {
+                "errors": {
+                    "description": "errors in the request",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
                 }
             }
         }

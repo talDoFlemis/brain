@@ -101,6 +101,7 @@ func (h *authHandler) RegisterRoutes(router fiber.Router) {
 //	@Param		req	body		LoginRequest	true	"login Request"
 //	@Success	200	{object}	TokenResponse
 //	@Failure	401	{string}	string	"Authentication Failed"
+//	@Failure    422 {object}    ValidationErrorResponse
 //	@Router		/auth/ [post]
 func (h *authHandler) Login(c *fiber.Ctx) error {
 	req := new(LoginRequest)
@@ -145,6 +146,7 @@ func (h *authHandler) Login(c *fiber.Ctx) error {
 //	@Success	200	{object}	TokenResponse
 //	@Failure	400	{string}	string	"Bad Refresh Token"
 //	@Failure	401	{string}	string	"Expired Token"
+//	@Failure    422 {object}    ValidationErrorResponse
 //	@Router		/auth/refresh [post]
 func (h *authHandler) RefreshToken(c *fiber.Ctx) error {
 	req := new(RefreshTokenRequest)
@@ -187,6 +189,7 @@ func (h *authHandler) RefreshToken(c *fiber.Ctx) error {
 //	@Param		req	body		RegisterUserRequest	true	"Register User Request"
 //	@Success	201	{object}	TokenResponse
 //	@Failure	409	{string}	string	"User already exists"
+//	@Failure    422 {object}    ValidationErrorResponse
 //	@Router		/auth/register [post]
 func (h *authHandler) RegisterUser(c *fiber.Ctx) error {
 	req := new(RegisterUserRequest)
@@ -232,6 +235,7 @@ func (h *authHandler) RegisterUser(c *fiber.Ctx) error {
 //	@Param		req	body	UpdateAccountRequest	true	"Update Account Request"
 //	@Success	200
 //	@Failure	409	{string}	string	"User already exists"
+//	@Failure    422 {object}    ValidationErrorResponse
 //	@Router		/auth/ [put]
 func (h *authHandler) UpdateAccount(c *fiber.Ctx) error {
 	user := c.Locals("user").(*jwt.Token)

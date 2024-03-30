@@ -27,7 +27,9 @@ func customKeyFunc(authManager ports.AuthenticationManager) jwt.Keyfunc {
 	}
 }
 
+// ValidationErrorResponse
 type ValidationErrorResponse struct {
+	// errors in the request
 	Errors []string `json:"errors"`
 }
 
