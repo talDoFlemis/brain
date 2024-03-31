@@ -39,21 +39,31 @@ func NewAuthenticationService(
 func (s *AuthenticationService) CreateUser(
 	ctx context.Context,
 	req *CreateUserRequest,
-) (*ports.UserIdentityInfo, error) {
+) (*ports.TokenResponse, error) {
 	err := s.validationService.Validate(req)
 	if err != nil {
 		s.logger.Error("failed to validate struct")
 		return nil, err
 	}
 
-	return s.authManager.CreateUser(ctx, req.Username, req.Email, req.Password)
+	info, err := s.authManager.CreateUser(ctx, req.Username, req.Email, req.Password)
+	if err != nil {
+		return nil, err
+	}
+
+	return s.authManager.CreateToken(ctx, info.ID)
 }
 
 func (s *AuthenticationService) AuthenticateUser(
 	ctx context.Context,
 	username, password string,
-) (*ports.UserIdentityInfo, error) {
-	return s.authManager.AuthenticateUser(ctx, username, password)
+) (*ports.TokenResponse, error) {
+	info, err := s.authManager.AuthenticateUser(ctx, username, password)
+	if err != nil {
+		return nil, err
+	}
+
+	return s.authManager.CreateToken(ctx, info.ID)
 }
 
 func (s *AuthenticationService) DeleteUser(ctx context.Context, userId string) error {
@@ -72,13 +82,6 @@ func (s *AuthenticationService) UpdateUser(
 	}
 
 	return s.authManager.UpdateUser(ctx, userId, req.Username, req.Password, req.Email)
-}
-
-func (s *AuthenticationService) CreateToken(
-	ctx context.Context,
-	userId string,
-) (*ports.TokenResponse, error) {
-	return s.authManager.CreateToken(ctx, userId)
 }
 
 func (s *AuthenticationService) RefreshToken(

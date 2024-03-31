@@ -37,6 +37,7 @@ type AuthenticationServiceIntegrationTestSuite struct {
 	ctx         context.Context
 	pool        *pgxpool.Pool
 	svc         *services.AuthenticationService
+	idp         ports.AuthenticationManager
 }
 
 func (suite *AuthenticationServiceIntegrationTestSuite) SetupSuite() {
@@ -67,6 +68,7 @@ func (suite *AuthenticationServiceIntegrationTestSuite) SetupSuite() {
 
 	suite.svc = svc
 	suite.pool = pool
+	suite.idp = adapter
 }
 
 func (suite *AuthenticationServiceIntegrationTestSuite) SetupTest() {
@@ -203,7 +205,7 @@ func (suite *AuthenticationServiceIntegrationTestSuite) TestCreateToken() {
 	t := suite.T()
 
 	// Act
-	tokenResponse, err := suite.svc.CreateToken(suite.ctx, testUserId)
+	tokenResponse, err := suite.idp.CreateToken(suite.ctx, testUserId)
 
 	// Assert
 	assert.NoError(t, err)
@@ -352,7 +354,7 @@ func (suite *AuthenticationServiceIntegrationTestSuite) TestUpdateUserWithBadInp
 func (suite *AuthenticationServiceIntegrationTestSuite) TestRefreshToken() {
 	// Arrange
 	t := suite.T()
-	tok, err := suite.svc.CreateToken(suite.ctx, testUserId)
+	tok, err := suite.idp.CreateToken(suite.ctx, testUserId)
 	assert.NoError(t, err)
 
 	// Act
@@ -400,7 +402,7 @@ func (suite *AuthenticationServiceIntegrationTestSuite) TestRefreshTokenWithBadI
 func (suite *AuthenticationServiceIntegrationTestSuite) TestGetUserInfo() {
 	// Arrange
 	t := suite.T()
-	toks, err := suite.svc.CreateToken(suite.ctx, testUserId)
+	toks, err := suite.idp.CreateToken(suite.ctx, testUserId)
 	assert.NoError(t, err)
 	expectedUser := &ports.UserIdentityInfo{
 		ID:       testUserId,
@@ -420,9 +422,8 @@ func (suite *AuthenticationServiceIntegrationTestSuite) TestGetUserInfoWithUnkno
 	// Arrange
 	t := suite.T()
 	unexistentUserId := uuid.New().String()
-	toks, err := suite.svc.CreateToken(suite.ctx, unexistentUserId)
+	toks, err := suite.idp.CreateToken(suite.ctx, unexistentUserId)
 	assert.NoError(t, err)
-
 
 	// Act
 	info, err := suite.svc.GetUserInfo(suite.ctx, toks.AccessToken)

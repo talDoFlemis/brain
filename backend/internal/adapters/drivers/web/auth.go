@@ -126,16 +126,11 @@ func (h *authHandler) Login(c *fiber.Ctx) error {
 		return err
 	}
 
-	info, err := h.authService.AuthenticateUser(c.Context(), req.Username, req.Password)
+	token, err := h.authService.AuthenticateUser(c.Context(), req.Username, req.Password)
 	if err != nil {
 		if errors.Is(err, ports.ErrUserNotFound) || errors.Is(err, ports.ErrInvalidPassword) {
 			return c.Status(fiber.StatusUnauthorized).SendString("Invalid username or password")
 		}
-		return err
-	}
-
-	token, err := h.authService.CreateToken(c.Context(), info.ID)
-	if err != nil {
 		return err
 	}
 
@@ -214,7 +209,7 @@ func (h *authHandler) RegisterUser(c *fiber.Ctx) error {
 		return err
 	}
 
-	user, err := h.authService.CreateUser(
+	token, err := h.authService.CreateUser(
 		c.Context(),
 		&services.CreateUserRequest{
 			Username: req.Username,
@@ -226,11 +221,6 @@ func (h *authHandler) RegisterUser(c *fiber.Ctx) error {
 		if errors.Is(err, ports.ErrUserAlreadyExists) {
 			return c.Status(fiber.StatusConflict).SendString("User already exists")
 		}
-		return err
-	}
-
-	token, err := h.authService.CreateToken(c.Context(), user.ID)
-	if err != nil {
 		return err
 	}
 
@@ -326,9 +316,9 @@ func (h *authHandler) UserInfo(c *fiber.Ctx) error {
 	}
 
 	resp := &UserInfoResponse{
-		ID: info.ID,
+		ID:       info.ID,
 		Username: info.Username,
-		Email: info.Email,
+		Email:    info.Email,
 	}
 
 	return c.JSON(resp)

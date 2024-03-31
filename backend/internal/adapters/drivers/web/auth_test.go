@@ -18,6 +18,7 @@ import (
 	"github.com/taldoflemis/brain.test/internal/adapters/driven/auth"
 	"github.com/taldoflemis/brain.test/internal/adapters/driven/postgres"
 	"github.com/taldoflemis/brain.test/internal/core/services"
+	"github.com/taldoflemis/brain.test/internal/ports"
 	testshelpers "github.com/taldoflemis/brain.test/test/helpers"
 )
 
@@ -43,6 +44,7 @@ type AuthHandlerTestSuite struct {
 	ctx  context.Context
 	pool *pgxpool.Pool
 	svc  *services.AuthenticationService
+	idp  ports.AuthenticationManager
 }
 
 func (suite *AuthHandlerTestSuite) SetupSuite() {
@@ -92,6 +94,7 @@ func (suite *AuthHandlerTestSuite) SetupSuite() {
 	suite.pgContainer = pgContainer
 	suite.pool = pool
 	suite.svc = authService
+	suite.idp = authManager
 }
 
 func (suite *AuthHandlerTestSuite) SetupTest() {
@@ -299,7 +302,7 @@ func (suite *AuthHandlerTestSuite) TestLoginWithWrongPassword() {
 func (suite *AuthHandlerTestSuite) TestRefreshToken() {
 	// Arrange
 	t := suite.T()
-	tok, err := suite.svc.CreateToken(suite.ctx, testUserId)
+	tok, err := suite.idp.CreateToken(suite.ctx, testUserId)
 	assert.NoError(t, err)
 	assert.NotNil(t, tok)
 
@@ -363,7 +366,7 @@ func (suite *AuthHandlerTestSuite) TestRefreshTokenWithInvalidRefreshToken() {
 func (suite *AuthHandlerTestSuite) TestUpdateUser() {
 	// Arrange
 	t := suite.T()
-	tok, err := suite.svc.CreateToken(suite.ctx, testUserId)
+	tok, err := suite.idp.CreateToken(suite.ctx, testUserId)
 	assert.NoError(t, err)
 
 	req := map[string]interface{}{
@@ -389,7 +392,7 @@ func (suite *AuthHandlerTestSuite) TestUpdateUser() {
 func (suite *AuthHandlerTestSuite) TestUpdateUserWithInvalidInput() {
 	// Arrange
 	t := suite.T()
-	tok, err := suite.svc.CreateToken(suite.ctx, testUserId)
+	tok, err := suite.idp.CreateToken(suite.ctx, testUserId)
 	assert.NoError(t, err)
 
 	headers := map[string]string{
@@ -489,7 +492,7 @@ func (suite *AuthHandlerTestSuite) TestUpdateUserToUsernameThatAlreadyExists() {
 	)
 	assert.NoError(t, err)
 
-	tok, err := suite.svc.CreateToken(suite.ctx, testUserId)
+	tok, err := suite.idp.CreateToken(suite.ctx, testUserId)
 	assert.NoError(t, err)
 
 	req := map[string]interface{}{
@@ -514,7 +517,7 @@ func (suite *AuthHandlerTestSuite) TestUpdateUserToUsernameThatAlreadyExists() {
 func (suite *AuthHandlerTestSuite) TestDeleteAccount() {
 	// Arrange
 	t := suite.T()
-	tok, err := suite.svc.CreateToken(suite.ctx, testUserId)
+	tok, err := suite.idp.CreateToken(suite.ctx, testUserId)
 	assert.NoError(t, err)
 
 	headers := map[string]string{
@@ -552,7 +555,7 @@ func (suite *AuthHandlerTestSuite) TestDeleteAccountWithoutAuthorization() {
 func (suite *AuthHandlerTestSuite) TestUserInfo() {
 	// Arrange
 	t := suite.T()
-	tok, err := suite.svc.CreateToken(suite.ctx, testUserId)
+	tok, err := suite.idp.CreateToken(suite.ctx, testUserId)
 	assert.NoError(t, err)
 
 	headers := map[string]string{
@@ -578,7 +581,7 @@ func (suite *AuthHandlerTestSuite) TestUserInfo() {
 func (suite *AuthHandlerTestSuite) TestUserInfoWithBadInput() {
 	// Arrange
 	t := suite.T()
-	invalidToken, err := suite.svc.CreateToken(suite.ctx, uuid.New().String())
+	invalidToken, err := suite.idp.CreateToken(suite.ctx, uuid.New().String())
 	assert.NoError(t, err)
 
 	table := []struct {
