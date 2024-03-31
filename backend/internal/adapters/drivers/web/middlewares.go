@@ -60,3 +60,9 @@ func convertValidationErrorsToResponse(
 
 	return error
 }
+
+func extractTokenFromContext(c *fiber.Ctx) string {
+	user := c.Locals("user").(*jwt.Token)
+	id := user.Claims.(jwt.MapClaims)["sub"].(string)
+	return id
+}

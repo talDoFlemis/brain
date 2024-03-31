@@ -3,9 +3,20 @@ package services
 import (
 	"context"
 
-	"github.com/taldoflemis/brain.test/internal/core/domain"
 	"github.com/taldoflemis/brain.test/internal/ports"
 )
+
+type CreateUserRequest struct {
+	Username string `validate:"required"`
+	Email    string `validate:"required,email"`
+	Password string `validate:"required,min=8,max=72"`
+}
+
+type UpdateUserRequest struct {
+	Username string `validate:"required"`
+	Email    string `validate:"required,email"`
+	Password string `validate:"required,min=8,max=72"`
+}
 
 type AuthenticationService struct {
 	logger            ports.Logger
@@ -27,7 +38,7 @@ func NewAuthenticationService(
 
 func (s *AuthenticationService) CreateUser(
 	ctx context.Context,
-	req *domain.CreateUserRequest,
+	req *CreateUserRequest,
 ) (*ports.UserIdentityInfo, error) {
 	err := s.validationService.Validate(req)
 	if err != nil {
@@ -52,7 +63,7 @@ func (s *AuthenticationService) DeleteUser(ctx context.Context, userId string) e
 func (s *AuthenticationService) UpdateUser(
 	ctx context.Context,
 	userId string,
-	req *domain.UpdateUserRequest,
+	req *UpdateUserRequest,
 ) (*ports.UserIdentityInfo, error) {
 	err := s.validationService.Validate(req)
 	if err != nil {

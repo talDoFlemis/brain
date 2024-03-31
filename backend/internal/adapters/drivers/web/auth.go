@@ -4,9 +4,7 @@ import (
 	"errors"
 
 	"github.com/gofiber/fiber/v2"
-	"github.com/golang-jwt/jwt/v5"
 
-	"github.com/taldoflemis/brain.test/internal/core/domain"
 	"github.com/taldoflemis/brain.test/internal/core/services"
 	"github.com/taldoflemis/brain.test/internal/ports"
 )
@@ -206,7 +204,11 @@ func (h *authHandler) RegisterUser(c *fiber.Ctx) error {
 
 	user, err := h.authService.CreateUser(
 		c.Context(),
-		&domain.CreateUserRequest{Username: req.Username, Email: req.Email, Password: req.Password},
+		&services.CreateUserRequest{
+			Username: req.Username,
+			Email:    req.Email,
+			Password: req.Password,
+		},
 	)
 	if err != nil {
 		if errors.Is(err, ports.ErrUserAlreadyExists) {
@@ -238,8 +240,7 @@ func (h *authHandler) RegisterUser(c *fiber.Ctx) error {
 //	@Failure    422 {object}    ValidationErrorResponse
 //	@Router		/auth/ [put]
 func (h *authHandler) UpdateAccount(c *fiber.Ctx) error {
-	user := c.Locals("user").(*jwt.Token)
-	id := user.Claims.(jwt.MapClaims)["sub"].(string)
+	id := extractTokenFromContext(c)
 
 	req := new(UpdateAccountRequest)
 
@@ -256,7 +257,11 @@ func (h *authHandler) UpdateAccount(c *fiber.Ctx) error {
 	_, err = h.authService.UpdateUser(
 		c.Context(),
 		id,
-		&domain.UpdateUserRequest{Username: req.Username, Email: req.Email, Password: req.Password},
+		&services.UpdateUserRequest{
+			Username: req.Username,
+			Email:    req.Email,
+			Password: req.Password,
+		},
 	)
 	if err != nil {
 		if errors.Is(err, ports.ErrUserAlreadyExists) {
@@ -274,8 +279,7 @@ func (h *authHandler) UpdateAccount(c *fiber.Ctx) error {
 //	@Success	200
 //	@Router		/auth/ [delete]
 func (h *authHandler) DeleteAccount(c *fiber.Ctx) error {
-	user := c.Locals("user").(*jwt.Token)
-	id := user.Claims.(jwt.MapClaims)["sub"].(string)
+	id := extractTokenFromContext(c)
 
 	err := h.authService.DeleteUser(c.Context(), id)
 	if err != nil {

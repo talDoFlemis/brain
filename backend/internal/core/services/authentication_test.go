@@ -12,7 +12,6 @@ import (
 
 	"github.com/taldoflemis/brain.test/internal/adapters/driven/auth"
 	"github.com/taldoflemis/brain.test/internal/adapters/driven/postgres"
-	"github.com/taldoflemis/brain.test/internal/core/domain"
 	"github.com/taldoflemis/brain.test/internal/core/services"
 	"github.com/taldoflemis/brain.test/internal/ports"
 	testshelpers "github.com/taldoflemis/brain.test/test/helpers"
@@ -109,7 +108,7 @@ func (suite *AuthenticationServiceIntegrationTestSuite) TestCreateUser() {
 	// Arrange
 	t := suite.T()
 
-	req := &domain.CreateUserRequest{
+	req := &services.CreateUserRequest{
 		Email:    "newemail@gmail.com",
 		Password: "newpassword",
 		Username: "newusername",
@@ -127,7 +126,7 @@ func (suite *AuthenticationServiceIntegrationTestSuite) TestCreateUserWithExisti
 	// Arrange
 	t := suite.T()
 
-	req := &domain.CreateUserRequest{
+	req := &services.CreateUserRequest{
 		Username: testUsername,
 		Email:    "newmail@gmail.com",
 		Password: "newpassword",
@@ -145,7 +144,7 @@ func (suite *AuthenticationServiceIntegrationTestSuite) TestCreateUserWithBadInp
 	// Arrange
 	t := suite.T()
 
-	req := &domain.CreateUserRequest{
+	req := &services.CreateUserRequest{
 		Password: "",
 		Email:    "",
 		Username: testUsername,
@@ -275,7 +274,7 @@ func (suite *AuthenticationServiceIntegrationTestSuite) TestUpdateUser() {
 	t := suite.T()
 	newEmail := "newemail@gmail.com"
 
-	req := &domain.UpdateUserRequest{
+	req := &services.UpdateUserRequest{
 		Email:    newEmail,
 		Password: testPassword,
 		Username: testUsername,
@@ -296,7 +295,7 @@ func (suite *AuthenticationServiceIntegrationTestSuite) TestUpdateUserWithBadInp
 	// Arrange
 	t := suite.T()
 
-	req := &domain.UpdateUserRequest{
+	req := &services.UpdateUserRequest{
 		Password: "",
 		Email:    "",
 		Username: testUsername,
