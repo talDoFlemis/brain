@@ -21,6 +21,10 @@
             go
             go-task
             air
+            govulncheck
+            gotestsum
+            go-swag
+            golangci-lint
           ];
         };
       });
