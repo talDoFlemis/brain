@@ -39,6 +39,7 @@ type AuthenticationManager interface {
 	RefreshToken(ctx context.Context, refreshToken string) (*TokenResponse, error)
 	GetPublicKey() interface{}
 	GetAlgorithm() string
+	GetUserInfo(ctx context.Context, tok string) (*UserIdentityInfo, error)
 }
 
 type LocalIDPUserEntity struct {
@@ -59,4 +60,5 @@ type LocalIDPStorer interface {
 	) (*LocalIDPUserEntity, error)
 	DeleteUser(ctx context.Context, userId string) error
 	FindUserByUsername(ctx context.Context, username string) (*LocalIDPUserEntity, error)
+	FindUserById(ctx context.Context, userId string) (*LocalIDPUserEntity, error)
 }

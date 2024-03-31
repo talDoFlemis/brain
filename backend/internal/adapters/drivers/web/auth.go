@@ -2,6 +2,7 @@ package web
 
 import (
 	"errors"
+	"strings"
 
 	"github.com/gofiber/fiber/v2"
 
@@ -59,6 +60,16 @@ type UpdateAccountRequest struct {
 	Email string `json:"email"    validate:"required"`
 }
 
+// UserInfoResponse
+type UserInfoResponse struct {
+	// the user id
+	ID string `json:"id"`
+	// the username
+	Username string `json:"username"`
+	// the user email
+	Email string `json:"email"`
+}
+
 type authHandler struct {
 	authService   *services.AuthenticationService
 	valService    *services.ValidationService
@@ -86,6 +97,7 @@ func (h *authHandler) RegisterRoutes(router fiber.Router) {
 
 	authApi.Use(h.jwtMiddleware)
 
+	authApi.Get("/userinfo", h.UserInfo)
 	authApi.Put("/", h.UpdateAccount)
 	authApi.Delete("/", h.DeleteAccount)
 }
@@ -236,6 +248,8 @@ func (h *authHandler) RegisterUser(c *fiber.Ctx) error {
 //	@Accept		json
 //	@Param		req	body	UpdateAccountRequest	true	"Update Account Request"
 //	@Success	200
+//	@Failure	400 {string}	string
+//	@Failure	401 {string}	string
 //	@Failure	409	{string}	string	"User already exists"
 //	@Failure    422 {object}    ValidationErrorResponse
 //	@Router		/auth/ [put]
@@ -277,6 +291,8 @@ func (h *authHandler) UpdateAccount(c *fiber.Ctx) error {
 //	@Summary	Delete an Account
 //	@Tags		Authentication
 //	@Success	200
+//	@Failure	400 {string}	string
+//	@Failure	401 {string}	string
 //	@Router		/auth/ [delete]
 func (h *authHandler) DeleteAccount(c *fiber.Ctx) error {
 	id := extractTokenFromContext(c)
@@ -287,4 +303,33 @@ func (h *authHandler) DeleteAccount(c *fiber.Ctx) error {
 	}
 
 	return c.SendStatus(fiber.StatusNoContent)
+}
+
+// UserInfo godoc
+//
+//	@Summary	Get User Info
+//	@Tags		Authentication
+//	@Success	200
+//	@Failure	400 {string}	string
+//	@Failure	401 {string}	string
+//	@Router		/auth/userinfo [get]
+func (h *authHandler) UserInfo(c *fiber.Ctx) error {
+	header := c.GetReqHeaders()["Authorization"]
+	token := strings.Split(header[0], " ")[1]
+
+	info, err := h.authService.GetUserInfo(c.Context(), token)
+	if err != nil {
+		if errors.Is(err, ports.ErrUserNotFound) {
+			return c.Status(fiber.StatusUnauthorized).SendString("Unauthorized")
+		}
+		return err
+	}
+
+	resp := &UserInfoResponse{
+		ID: info.ID,
+		Username: info.Username,
+		Email: info.Email,
+	}
+
+	return c.JSON(resp)
 }

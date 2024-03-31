@@ -80,7 +80,7 @@ func TestLocalIDPPostgresStorer(t *testing.T) {
 	suite.Run(t, new(LocalIDPPostgresStorerTestSuite))
 }
 
-func (suite *LocalIDPPostgresStorerTestSuite) TestFindUserById() {
+func (suite *LocalIDPPostgresStorerTestSuite) TestFindUserByUsername() {
 	// Arrange
 	t := suite.T()
 
@@ -94,13 +94,40 @@ func (suite *LocalIDPPostgresStorerTestSuite) TestFindUserById() {
 	assert.Equal(t, testEmail, user.Email)
 }
 
-func (suite *LocalIDPPostgresStorerTestSuite) TestTryToFindUserByIdThatDoesNotExist() {
+func (suite *LocalIDPPostgresStorerTestSuite) TestTryToFindUserByUsernameThatDoesNotExist() {
 	// Arrange
 	t := suite.T()
 	random := "7ebc4755-b7cc-4963-a2b1-636949b035d6"
 
 	// Act
 	user, err := suite.repo.FindUserByUsername(suite.ctx, random)
+
+	// Assert
+	assert.Nil(t, user)
+	assert.ErrorIs(t, err, ports.ErrUserNotFound)
+}
+
+func (suite *LocalIDPPostgresStorerTestSuite) TestFindUserById() {
+	// Arrange
+	t := suite.T()
+
+	// Act
+	user, err := suite.repo.FindUserById(suite.ctx, testUserId)
+
+	// Assert
+	assert.NoError(t, err)
+	assert.NotNil(t, user)
+	assert.Equal(t, testUsername, user.Username)
+	assert.Equal(t, testEmail, user.Email)
+	assert.Equal(t, testUserId, user.ID)
+}
+
+func (suite *LocalIDPPostgresStorerTestSuite) TestTryToFindUserByIdThatDoesNotExist() {
+	// Arrange
+	t := suite.T()
+
+	// Act
+	user, err := suite.repo.FindUserById(suite.ctx, "7ebc4755-b7cc-4963-a2b1-636949b035d6")
 
 	// Assert
 	assert.Nil(t, user)

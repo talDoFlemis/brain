@@ -129,3 +129,27 @@ func (s *LocalIDPPostgresStorer) FindUserByUsername(
 
 	return &user, nil
 }
+
+func (s *LocalIDPPostgresStorer) FindUserById(
+	ctx context.Context,
+	userId string,
+) (*ports.LocalIDPUserEntity, error) {
+	args := pgx.NamedArgs{
+		"id": userId,
+	}
+
+	query := `SELECT id, username, email, password FROM users WHERE id = @id`
+
+	var user ports.LocalIDPUserEntity
+
+	err := s.pool.QueryRow(ctx, query, args).
+		Scan(&user.ID, &user.Username, &user.Email, &user.HashedPassword)
+	if err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			return nil, ports.ErrUserNotFound
+		}
+		return nil, err
+	}
+
+	return &user, nil
+}

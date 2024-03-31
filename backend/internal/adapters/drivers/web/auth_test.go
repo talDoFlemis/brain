@@ -548,3 +548,77 @@ func (suite *AuthHandlerTestSuite) TestDeleteAccountWithoutAuthorization() {
 	// Assert
 	resp.Status(http.StatusUnauthorized)
 }
+
+func (suite *AuthHandlerTestSuite) TestUserInfo() {
+	// Arrange
+	t := suite.T()
+	tok, err := suite.svc.CreateToken(suite.ctx, testUserId)
+	assert.NoError(t, err)
+
+	headers := map[string]string{
+		"Authorization": authHeaderPrefix + tok.AccessToken,
+	}
+
+	server := httptest.NewServer(adaptor.FiberApp(suite.app))
+	e := httpexpect.Default(t, server.URL)
+
+	// Act
+	resp := e.GET("/auth/userinfo").WithHeaders(headers).Expect()
+
+	// Assert
+	resp.Status(http.StatusOK)
+	json := resp.JSON().Object()
+	json.IsEqual(map[string]interface{}{
+		"username": testUsername,
+		"email":    testEmail,
+		"id":       testUserId,
+	})
+}
+
+func (suite *AuthHandlerTestSuite) TestUserInfoWithBadInput() {
+	// Arrange
+	t := suite.T()
+	invalidToken, err := suite.svc.CreateToken(suite.ctx, uuid.New().String())
+	assert.NoError(t, err)
+
+	table := []struct {
+		headers     map[string]string
+		status      int
+		description string
+	}{
+		{
+			headers:     make(map[string]string),
+			status:      fiber.StatusUnauthorized,
+			description: "empty token",
+		},
+		{
+			headers: map[string]string{
+				"Authorization": authHeaderPrefix + "invalid_token",
+			},
+			status:      fiber.StatusUnauthorized,
+			description: "invalid token",
+		},
+		{
+			headers: map[string]string{
+				"Authorization": authHeaderPrefix + invalidToken.AccessToken,
+			},
+			status:      fiber.StatusUnauthorized,
+			description: "invalid user id",
+		},
+	}
+
+	server := httptest.NewServer(adaptor.FiberApp(suite.app))
+	e := httpexpect.Default(t, server.URL)
+
+	for _, tt := range table {
+		t.Run(tt.description, func(t *testing.T) {
+			// Act
+			resp := e.GET("/auth/userinfo").
+				WithHeaders(tt.headers).
+				Expect()
+
+			// Assert
+			resp.Status(tt.status)
+		})
+	}
+}

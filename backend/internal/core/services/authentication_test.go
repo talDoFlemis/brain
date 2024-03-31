@@ -396,3 +396,38 @@ func (suite *AuthenticationServiceIntegrationTestSuite) TestRefreshTokenWithBadI
 		})
 	}
 }
+
+func (suite *AuthenticationServiceIntegrationTestSuite) TestGetUserInfo() {
+	// Arrange
+	t := suite.T()
+	toks, err := suite.svc.CreateToken(suite.ctx, testUserId)
+	assert.NoError(t, err)
+	expectedUser := &ports.UserIdentityInfo{
+		ID:       testUserId,
+		Email:    testEmail,
+		Username: testUsername,
+	}
+
+	// Act
+	info, err := suite.svc.GetUserInfo(suite.ctx, toks.AccessToken)
+
+	// Assert
+	assert.NoError(t, err)
+	assert.Equal(t, expectedUser, info)
+}
+
+func (suite *AuthenticationServiceIntegrationTestSuite) TestGetUserInfoWithUnknownUser() {
+	// Arrange
+	t := suite.T()
+	unexistentUserId := uuid.New().String()
+	toks, err := suite.svc.CreateToken(suite.ctx, unexistentUserId)
+	assert.NoError(t, err)
+
+
+	// Act
+	info, err := suite.svc.GetUserInfo(suite.ctx, toks.AccessToken)
+
+	// Assert
+	assert.ErrorIs(t, err, ports.ErrUserNotFound)
+	assert.Nil(t, info)
+}

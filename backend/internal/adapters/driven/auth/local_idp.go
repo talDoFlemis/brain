@@ -113,16 +113,7 @@ func (i *localIDP) RefreshToken(
 	refreshToken string,
 ) (*ports.TokenResponse, error) {
 	i.logger.Debug("Refreshing token")
-	token, err := jwt.ParseWithClaims(
-		refreshToken,
-		&jwt.RegisteredClaims{},
-		func(token *jwt.Token) (interface{}, error) {
-			return i.cfg.publicKey, nil
-		},
-		jwt.WithAudience(i.cfg.audience),
-		jwt.WithIssuer(i.cfg.issuer),
-		jwt.WithExpirationRequired(),
-	)
+	token, err := i.parseToken(refreshToken)
 	if err != nil {
 		i.logger.Error("Failed to parse refresh token", err)
 		if errors.Is(err, jwt.ErrTokenExpired) {
@@ -219,6 +210,33 @@ func (i *localIDP) GetAlgorithm() string {
 	return jwt.SigningMethodEdDSA.Alg()
 }
 
+func (i *localIDP) GetUserInfo(ctx context.Context, tok string) (*ports.UserIdentityInfo, error) {
+	i.logger.Info("Getting user info")
+	token, err := i.parseToken(tok)
+	if err != nil {
+		i.logger.Error("Failed to parse token", err)
+		if errors.Is(err, jwt.ErrTokenExpired) {
+			return nil, ports.ErrExpiredToken
+		}
+		return nil, ports.ErrInvalidRefreshToken
+	}
+	claims := token.Claims.(*jwt.RegisteredClaims)
+
+	id := claims.Subject
+
+	info, err := i.repo.FindUserById(ctx, id)
+	if err != nil {
+		i.logger.Error("Failed to find user", "userId", id)
+		return nil, err
+	}
+
+	return &ports.UserIdentityInfo{
+		ID:       info.ID,
+		Email:    info.Email,
+		Username: info.Username,
+	}, nil
+}
+
 func (i *localIDP) generateToken(
 	ctx context.Context,
 	userId string,
@@ -249,4 +267,17 @@ func (i *localIDP) hashPassword(password string) (string, error) {
 		return "", err
 	}
 	return string(hashedPasswordBytes), nil
+}
+
+func (i *localIDP) parseToken(token string) (*jwt.Token, error) {
+	return jwt.ParseWithClaims(
+		token,
+		&jwt.RegisteredClaims{},
+		func(token *jwt.Token) (interface{}, error) {
+			return i.cfg.publicKey, nil
+		},
+		jwt.WithAudience(i.cfg.audience),
+		jwt.WithIssuer(i.cfg.issuer),
+		jwt.WithExpirationRequired(),
+	)
 }

@@ -261,3 +261,38 @@ func (suite *LocalIDPTestSuite) TestUpdateUserThatDoesNotExist() {
 	assert.ErrorContains(t, err, ports.ErrUserNotFound.Error())
 	assert.Nil(t, user)
 }
+
+func (suite *LocalIDPTestSuite) TestGetUserInfo() {
+	// Arrange
+	t := suite.T()
+	validToken, err := suite.svc.generateToken(suite.ctx, testUserId, time.Hour)
+	assert.NoError(t, err)
+	expected := &ports.UserIdentityInfo{
+		ID:       testUserId,
+		Email:    testEmail,
+		Username: testUsername,
+	}
+
+	// Act
+	user, err := suite.svc.GetUserInfo(suite.ctx, validToken)
+
+	// Assert
+	assert.NoError(t, err)
+	assert.NotNil(t, user)
+	assert.Equal(t, expected, user)
+}
+
+func (suite *LocalIDPTestSuite) TestGetUserInfoThatDoesNotExist() {
+	// Arrange
+	t := suite.T()
+	randomId := "d0b8b515-f46b-4179-bb26-f7833ded8f8f"
+	invalidToken, err := suite.svc.generateToken(suite.ctx, randomId, time.Hour)
+	assert.NoError(t, err)
+
+	// Act
+	user, err := suite.svc.GetUserInfo(suite.ctx, invalidToken)
+
+	// Assert
+	assert.ErrorContains(t, err, ports.ErrUserNotFound.Error())
+	assert.Nil(t, user)
+}

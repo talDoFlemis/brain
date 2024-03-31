@@ -95,3 +95,10 @@ func (s *AuthenticationService) GetPublicKey() interface{} {
 func (s *AuthenticationService) GetAlgorithm() string {
 	return s.authManager.GetAlgorithm()
 }
+
+func (s *AuthenticationService) GetUserInfo(
+	ctx context.Context,
+	token string,
+) (*ports.UserIdentityInfo, error) {
+	return s.authManager.GetUserInfo(ctx, token)
+}
