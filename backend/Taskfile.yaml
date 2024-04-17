@@ -62,3 +62,8 @@ tasks:
     desc: "Check for code common vulnerabilities"
     cmds:
       - govulncheck ./...
+
+  migrate:
+    desc: "Migrate postgres"
+    cmds:
+      - go run ./cmd/migrate/
