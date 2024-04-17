@@ -38,6 +38,9 @@ jobs:
       - name: Check lint
         run: task lint
 
+      - name: Check format
+        run: task check-format
+
       - name: Check types
         run: task type-check
 
