@@ -6,6 +6,16 @@ tasks:
     cmds:
       - npm run lint
 
+  format:
+    desc: "Format"
+    cmds:
+      - npx prettier . --write
+
+  check-format:
+    desc: "Check format"
+    cmds:
+      - npx prettier . --check
+
   type-check:
     desc: "Type-check"
     cmds:

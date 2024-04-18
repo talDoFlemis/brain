@@ -23,6 +23,7 @@ func NewConfig(user, password, domain, database string, port int) *Config {
 		Password: password,
 		Host:     domain,
 		Port:     port,
+		Database: database,
 	}
 }
 
@@ -61,7 +62,7 @@ func NewPool(connStr string) (*pgxpool.Pool, error) {
 
 func GenerateConnectionString(cfg *Config) string {
 	str := fmt.Sprintf(
-		"postgres://%s:%s@%s:%d/%s&sslmode=disable",
+		"postgres://%s:%s@%s:%d/%s?sslmode=disable",
 		cfg.User,
 		cfg.Password,
 		cfg.Host,

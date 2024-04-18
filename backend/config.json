@@ -19,8 +19,8 @@
   "postgres": {
     "host": "localhost",
     "port": 5432,
-    "user": "postgres",
+    "user": "adminson",
     "password": "password",
-    "database": "postgres"
+    "database": "brain"
   }
 }
