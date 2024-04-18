@@ -5,12 +5,12 @@ import LoginForm from "./login-form";
 
 function LoginSection() {
   return (
-    <section className="col-span-4 lg:col-span-2 justify-self-center flex flex-col w-full py-8 px-4 gap-8 max-w-lg">
+    <section className="col-span-4 lg:col-span-2 justify-self-center flex flex-col w-full py-12 px-4 gap-10 max-w-lg">
       <Image
         className="self-center"
         src="/brain-logo-white.svg"
         alt="brain.test logo"
-        width={225}
+        width={175}
         height={50}
         priority
       />
@@ -26,7 +26,7 @@ function LoginSection() {
       <p className="text-sm text-foreground">
         Nao tem uma conta ainda?
         <Button variant="link" size="sm" asChild>
-          <Link href="#">Registrar</Link>
+          <Link href="/sign-up">Registrar</Link>
         </Button>
       </p>
     </section>
