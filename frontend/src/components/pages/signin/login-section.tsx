@@ -31,7 +31,7 @@ function LoginSection() {
       </div>
       <LoginForm submitForm={submitForm} />
       <p className="text-sm text-foreground">
-        Nao tem uma conta ainda?
+        Não tem uma conta ainda?
         <Button variant="link" size="sm" asChild>
           <Link href="/sign-up">Registrar</Link>
         </Button>
