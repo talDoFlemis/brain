@@ -40,3 +40,18 @@ tasks:
     cmds:
       - task: build
       - task: start
+
+  unit-test-watch:
+    desc: "Run unit tests in watch mode"
+    cmds:
+      - npm run test:watch
+
+  unit-test-ci:
+    desc: "Run unit tests in a single run"
+    cmds:
+      - npm run test:ci
+
+  unit-test-coverage:
+    desc: "Run unit tests in a single run with coverage report"
+    cmds:
+      - npm run test:coverage
