@@ -3,6 +3,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import authService from "@/services/auth-service";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -14,6 +15,8 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { signIn } from "next-auth/react";
+import { SIGN_IN_CALLBACK_URL } from "@/utils/constants";
 
 const formSchema = z.object({
   username: z
@@ -23,10 +26,10 @@ const formSchema = z.object({
   email: z.string().email({ message: "Insira um email valido" }),
   password: z
     .string()
-    .min(5, { message: "Senha deve conter 5 ou mais caracteres" }),
+    .min(8, { message: "Senha deve conter 8 ou mais caracteres" }),
   confirm: z
     .string()
-    .min(5, { message: "Senha deve conter 5 ou mais caracteres" }),
+    .min(8, { message: "Senha deve conter 8 ou mais caracteres" }),
 });
 
 type RegisterFormSchema = z.infer<typeof formSchema>;
@@ -42,7 +45,7 @@ function RegisterForm() {
     },
   });
 
-  function onSubmit(values: RegisterFormSchema) {
+  async function onSubmit(values: RegisterFormSchema) {
     if (values.password !== values.confirm) {
       form.setError("confirm", {
         type: "validate",
@@ -51,7 +54,23 @@ function RegisterForm() {
       return;
     }
 
-    console.log(values);
+    try {
+      await authService.signUp({
+        username: values.username,
+        email: values.email,
+        password: values.password,
+      });
+      
+      // Signs the user in, and redirects him to the home page
+      await signIn("credentials", {
+        username: values.username,
+        password: values.password,
+        callbackUrl: SIGN_IN_CALLBACK_URL,
+      });
+    } catch (error) {
+      // TODO: Error handling
+      console.log(error);
+    }
   }
 
   return (
