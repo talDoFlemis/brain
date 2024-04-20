@@ -75,27 +75,27 @@ const docTemplate = `{
                 "tags": [
                     "Authentication"
                 ],
-                "summary": "Log In a User",
+                "summary": "Register an User",
                 "parameters": [
                     {
-                        "description": "login Request",
+                        "description": "Register User Request",
                         "name": "req",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/web.LoginRequest"
+                            "$ref": "#/definitions/web.RegisterUserRequest"
                         }
                     }
                 ],
                 "responses": {
-                    "200": {
-                        "description": "OK",
+                    "201": {
+                        "description": "Created",
                         "schema": {
                             "$ref": "#/definitions/web.TokenResponse"
                         }
                     },
-                    "401": {
-                        "description": "Authentication Failed",
+                    "409": {
+                        "description": "User already exists",
                         "schema": {
                             "type": "string"
                         }
@@ -127,6 +127,51 @@ const docTemplate = `{
                         "description": "Unauthorized",
                         "schema": {
                             "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/auth/login": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Log In a User",
+                "parameters": [
+                    {
+                        "description": "login Request",
+                        "name": "req",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/web.LoginRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/web.TokenResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Authentication Failed",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "schema": {
+                            "$ref": "#/definitions/web.ValidationErrorResponse"
                         }
                     }
                 }
@@ -170,51 +215,6 @@ const docTemplate = `{
                     },
                     "401": {
                         "description": "Expired Token",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    "422": {
-                        "description": "Unprocessable Entity",
-                        "schema": {
-                            "$ref": "#/definitions/web.ValidationErrorResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/auth/register": {
-            "post": {
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Authentication"
-                ],
-                "summary": "Register an User",
-                "parameters": [
-                    {
-                        "description": "Register User Request",
-                        "name": "req",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/web.RegisterUserRequest"
-                        }
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "description": "Created",
-                        "schema": {
-                            "$ref": "#/definitions/web.TokenResponse"
-                        }
-                    },
-                    "409": {
-                        "description": "User already exists",
                         "schema": {
                             "type": "string"
                         }
