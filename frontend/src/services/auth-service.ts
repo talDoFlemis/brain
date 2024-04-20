@@ -15,11 +15,13 @@ type RefreshRequest = {
   refresh_token: string;
 }
 
-type SignUpResponse = {
+type AccessTokens = {
   access_token: string;
   refresh_token: string;
   expire_at: string;
 };
+
+type SignUpResponse = AccessTokens;
 
 type SignInResponse = SignUpResponse;
 
@@ -43,7 +45,7 @@ const signUp = async (data: SignUpRequest): Promise<SignUpResponse> => {
 
 const signIn = async (data: SignInRequest): Promise<SignUpResponse> => {
   try {
-    const response = await apiProvider.usePost<SignInResponse, SignInRequest>("/auth/", data)
+    const response = await apiProvider.usePost<SignInResponse, SignInRequest>("/auth/login", data)
 
     return response;
   } catch (error) {
@@ -61,9 +63,11 @@ const refreshToken = async (data: RefreshRequest): Promise<RefreshResponse> => {
   }
 }
 
-const getUserInfo = async (): Promise<UserInfoResponse> => {
+const getUserInfo = async (access_token: string): Promise<UserInfoResponse> => {
   try {
-    const response = await apiProvider.useGet<UserInfoResponse>("/auth/userinfo")
+    const response = await apiProvider.useGet<UserInfoResponse>("/auth/userinfo", { headers: {
+      "Authorization": `Bearer ${access_token}`
+    }})
 
     return response;
   } catch (error) {

@@ -1,15 +1,9 @@
 import axios, { AxiosRequestConfig } from "axios";
 import { BACKEND_API_URL } from "@/utils/constants";
-import { errorInterceptor } from "./interceptors/error-interceptor";
 
 const provider = axios.create({
   baseURL: BACKEND_API_URL,
 });
-
-provider.interceptors.response.use(
-  (response) => response,
-  (error) => errorInterceptor(error),
-);
 
 const useGet = async <T>(
   path: string,
