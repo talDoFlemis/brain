@@ -27,9 +27,7 @@ export const authOptions: NextAuthOptions = {
           return response;
         } catch (error) {
           if (isAxiosError(error)) {
-            return Promise.reject(
-              new Error(error.response?.data)
-            );
+            return Promise.reject(new Error(error.response?.data));
           }
           return Promise.reject(new Error(`${error}`));
         }
