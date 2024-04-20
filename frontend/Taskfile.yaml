@@ -55,3 +55,13 @@ tasks:
     desc: "Run unit tests in a single run with coverage report"
     cmds:
       - npm run test:coverage
+
+  e2e-test-ui:
+    desc: "Run end-to-end tests in ui mode"
+    cmds:
+      - npm run e2e-test:ui
+
+  e2e-test-ci:
+    desc: "Run end-to-end tests in ci mode"
+    cmds:
+      - npm run e2e-test:ci

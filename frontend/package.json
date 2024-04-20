@@ -10,7 +10,9 @@
     "type-check": "tsc --pretty --noEmit",
     "test:watch": "vitest --ui",
     "test:ci": "vitest --run",
-    "test:coverage": "vitest --run --coverage"
+    "test:coverage": "vitest --run --coverage",
+    "e2e-test:ui": "playwright test --ui",
+    "e2e-test:ci": "playwright test"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.3.4",
@@ -28,6 +30,7 @@
     "zod": "^3.22.4"
   },
   "devDependencies": {
+    "@playwright/test": "^1.43.1",
     "@testing-library/jest-dom": "^6.4.2",
     "@testing-library/react": "^15.0.2",
     "@testing-library/user-event": "^14.5.2",
