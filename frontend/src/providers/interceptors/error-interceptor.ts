@@ -1,48 +1,30 @@
 import { AxiosError } from "axios";
 
+const baseErrorHandler = (error: AxiosError, customMsg?: string) => {
+  const data = error.response?.data as { errors: string[] };
+
+  if (data.errors) return Promise.reject(new Error(data.errors.join(",")));
+  
+  if (customMsg) return Promise.reject(new Error(customMsg))
+  
+  return Promise.reject(new Error(`${data}`));
+}
+
 const handleNetworkError = () => {
   return Promise.reject(new Error("Erro de conexão"));
 };
 
-const handleBadRequest = (error: AxiosError) => {
-  const data = error.response?.data as { error: string };
+const handleBadRequest = (error: AxiosError) => baseErrorHandler(error);
 
-  if (data.error) return Promise.reject(new Error(data.error));
+const handleUnauthorized = (error: AxiosError) => baseErrorHandler(error, "Usuário não autorizado") 
 
-  return data;
-};
+const handleNotFound = (error: AxiosError) => baseErrorHandler(error)
 
-const handleUnauthorized = (error: AxiosError) => {
-  const data = error.response?.data as { error: string };
+const handleConflict = (error: AxiosError) => baseErrorHandler(error)
 
-  if (data.error) return Promise.reject(new Error(data.error));
+const handleUnprocessableContent = (error: AxiosError) => baseErrorHandler(error)
 
-  return Promise.reject(new Error("Usuário não autorizado"));
-};
-
-const handleNotFound = (error: AxiosError) => {
-  const data = error.response?.data as { error: string };
-
-  if (data.error) return Promise.reject(new Error(data.error));
-
-  return data;
-};
-
-const handleUnprocessableContent = (error: AxiosError) => {
-  const data = error.response?.data as { error: string };
-
-  if (data.error) return Promise.reject(new Error(data.error));
-
-  return data;
-};
-
-const handleInternalServerError = (error: AxiosError) => {
-  const data = error.response?.data as { error: string };
-
-  return Promise.reject(
-    new Error(data.error || "Erro interno. Tente novamente mais tarde"),
-  );
-};
+const handleInternalServerError = (error: AxiosError) => baseErrorHandler(error)
 
 export const errorInterceptor = (error: AxiosError) => {
   if (error.message === "Network Error") {
@@ -59,6 +41,10 @@ export const errorInterceptor = (error: AxiosError) => {
 
   if (error.message === "Request failed with status code 404") {
     return handleNotFound(error);
+  }
+
+  if (error.message === "Request failed with status code 409") {
+    return handleConflict(error);
   }
 
   if (error.message === "Request failed with status code 422") {
