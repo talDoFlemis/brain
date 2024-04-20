@@ -11,6 +11,25 @@ services:
       retries: 5
       start_period: 20s
       timeout: 10s
+    depends_on:
+      - backend
+
+  backend:
+    container_name: brain-backend
+    build:
+      context: ./backend/
+    ports:
+      - "42069:42069"
+    volumes:
+      - ./backend/config.json:/app/config.json
+    environment:
+      BRAIN_POSTGRES_HOST: "${BRAIN_POSTGRES_HOST:-database}"
+      BRAIN_POSTGRES_USER: "${POSTGRES_USER:-adminson}"
+      BRAIN_POSTGRES_PORT: "${BRAIN_POSTGRES_PORT:-5432}"
+      BRAIN_POSTGRES_DATABASE: "${BRAIN_POSTGRES_DATABASE:-brain}"
+      BRAIN_POSTGRES_PASSWORD: "${BRAIN_POSTGRES_PASSWORD:-password}"
+    depends_on:
+      - database
 
   database:
     image: postgres:16.2-alpine3.19
