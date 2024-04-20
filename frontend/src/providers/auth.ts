@@ -1,7 +1,12 @@
 import NextAuth, { NextAuthOptions } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import authService from "@/services/auth-service";
-import { handleSignIn, handleTokenRefreshment, isTokenExpired } from "@/utils/token";
+import {
+  handleSignIn,
+  handleTokenRefreshment,
+  isTokenExpired,
+} from "@/utils/token";
+import { isAxiosError } from "axios";
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -18,11 +23,15 @@ export const authOptions: NextAuthOptions = {
             username: credentials.username,
             password: credentials.password,
           });
-          
+
           return response;
         } catch (error) {
-          console.log(`[Error] Could not sign in: ${error}`);
-          return null;
+          if (isAxiosError(error)) {
+            return Promise.reject(
+              new Error(error.response?.data)
+            );
+          }
+          return Promise.reject(new Error(`${error}`));
         }
       },
     }),
@@ -31,7 +40,7 @@ export const authOptions: NextAuthOptions = {
   pages: {
     signIn: "/sign-in",
     signOut: "/sign-in",
-    newUser: "/sign-up"
+    newUser: "/sign-up",
   },
   secret: process.env.NEXTAUTH_SECRET,
   callbacks: {
@@ -42,9 +51,9 @@ export const authOptions: NextAuthOptions = {
       }
       // Refresh access token
       if (token.expire_at && isTokenExpired(token.expire_at)) {
-        return await handleTokenRefreshment(token)
+        return await handleTokenRefreshment(token);
       }
-      
+
       return token;
     },
     async session({ session, token }) {
@@ -57,6 +66,6 @@ export const authOptions: NextAuthOptions = {
       return session;
     },
   },
-} 
+};
 
 export const handler = NextAuth(authOptions);

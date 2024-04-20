@@ -15,10 +15,17 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import Link from "next/link";
+import { signIn } from "next-auth/react";
+import { SIGN_IN_CALLBACK_URL } from "@/utils/constants";
+import { useRouter } from "next/navigation";
 
 const formSchema = z.object({
-  email: z.string().email({ message: "Insira um email valido" }),
-  password: z.string(),
+  username: z
+    .string()
+    .min(5, { message: "Nome deve ter conter 5 ou mais caracteres" }),
+  password: z
+    .string()
+    .min(8, { message: "Senha deve conter 8 ou mais caracteres" }),
 });
 
 type LoginFormSchema = z.infer<typeof formSchema>;
@@ -27,13 +34,30 @@ function LoginForm() {
   const form = useForm<LoginFormSchema>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      email: "",
+      username: "",
       password: "",
     },
   });
 
-  function onSubmit(values: LoginFormSchema) {
-    console.log(values);
+  const router = useRouter();
+
+  async function onSubmit(values: LoginFormSchema) {
+    const response = await signIn("credentials", {
+      username: values.username,
+      password: values.password,
+      redirect: false,
+      callbackUrl: SIGN_IN_CALLBACK_URL,
+    });
+
+    if (response?.error) {
+      form.setError("username", {
+        type: "validate",
+        message: "Usuario ou senhas incorretas",
+      });
+      return;
+    }
+
+    router.push(SIGN_IN_CALLBACK_URL);
   }
 
   return (
@@ -41,15 +65,15 @@ function LoginForm() {
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
         <FormField
           control={form.control}
-          name="email"
+          name="username"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-foreground">Email</FormLabel>
+              <FormLabel className="text-foreground">Username</FormLabel>
               <FormControl>
                 <Input
                   className="text-foreground"
-                  type="email"
-                  placeholder="marcelo@example.com"
+                  type="text"
+                  placeholder="marcelo jr"
                   {...field}
                 />
               </FormControl>

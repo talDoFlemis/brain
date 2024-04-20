@@ -17,6 +17,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { signIn } from "next-auth/react";
 import { SIGN_IN_CALLBACK_URL } from "@/utils/constants";
+import { isAxiosError } from "axios"
 
 const formSchema = z.object({
   username: z
@@ -68,7 +69,13 @@ function RegisterForm() {
         callbackUrl: SIGN_IN_CALLBACK_URL,
       });
     } catch (error) {
-      // TODO: Error handling
+      if (isAxiosError(error) && error.response?.status == 409) {
+        form.setError("username", {
+          type: "validate",
+          message: "Nome de usuario ja existe"
+        })  
+        return;
+      }
       console.log(error);
     }
   }

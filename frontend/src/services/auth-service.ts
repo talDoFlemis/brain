@@ -45,7 +45,7 @@ const signUp = async (data: SignUpRequest): Promise<SignUpResponse> => {
 
 const signIn = async (data: SignInRequest): Promise<SignUpResponse> => {
   try {
-    const response = await apiProvider.usePost<SignInResponse, SignInRequest>("/auth/login", data)
+    const response = await apiProvider.usePost<SignInResponse, SignInRequest>("/auth/", data)
 
     return response;
   } catch (error) {
