@@ -3,6 +3,10 @@ import { Inter } from "next/font/google";
 import "../styles/globals.css";
 import SessionProvider from "@/components/layout/SessionProvider"
 import { getServerSession } from "next-auth";
+import { REFRESH_TOKEN_ERROR, USER_INFO_ERROR } from "@/utils/token";
+import { redirect } from "next/navigation";
+import { SIGN_OUT_CALLBACK_URL } from "@/utils/constants";
+import { authOptions } from "@/providers/auth";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -16,7 +20,11 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const session = await getServerSession()
+  const session = await getServerSession(authOptions)
+  // Check where a session error exists and redirect
+  if (session?.error === USER_INFO_ERROR || session?.error === REFRESH_TOKEN_ERROR) {
+    redirect(SIGN_OUT_CALLBACK_URL)
+  }
 
   return (
     <html lang="en">

@@ -1,9 +1,9 @@
-import NextAuth from "next-auth";
+import NextAuth, { NextAuthOptions } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import authService from "@/services/auth-service";
 import { handleSignIn, handleTokenRefreshment, isTokenExpired } from "@/utils/token";
 
-export const handler = NextAuth({
+export const authOptions: NextAuthOptions = {
   providers: [
     Credentials({
       credentials: {
@@ -31,6 +31,7 @@ export const handler = NextAuth({
   pages: {
     signIn: "/sign-in",
     signOut: "/sign-in",
+    newUser: "/sign-up"
   },
   secret: process.env.NEXTAUTH_SECRET,
   callbacks: {
@@ -56,4 +57,6 @@ export const handler = NextAuth({
       return session;
     },
   },
-});
+} 
+
+export const handler = NextAuth(authOptions);
