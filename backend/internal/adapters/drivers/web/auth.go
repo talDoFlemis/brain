@@ -91,8 +91,8 @@ func NewAuthHandler(
 func (h *authHandler) RegisterRoutes(router fiber.Router) {
 	authApi := router.Group("/auth")
 
-	authApi.Post("/", h.RegisterUser)
-	authApi.Post("/login", h.Login)
+	authApi.Post("/register", h.RegisterUser)
+	authApi.Post("/", h.Login)
 	authApi.Post("/refresh", h.RefreshToken)
 
 	authApi.Use(h.jwtMiddleware)
