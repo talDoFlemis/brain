@@ -67,3 +67,8 @@ tasks:
     desc: "Migrate postgres"
     cmds:
       - go run ./cmd/migrate/
+
+  seed:
+    desc: "Seed Database"
+    cmds:
+      - go run ./cmd/seed/
