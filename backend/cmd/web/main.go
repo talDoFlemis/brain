@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"log"
 	"os"
 	"os/signal"
@@ -24,6 +25,10 @@ func main() {
 	// Init configs
 	koanf := config.NewKoanfson()
 	err := koanf.LoadFromJSON("config.json")
+	if err != nil {
+		log.Fatal(err)
+	}
+	err = koanf.LoadFromEnv("BRAIN_")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -52,6 +57,11 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+	_, err = pool.Exec(context.Background(), "SELECT 1")
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	localIDPStorer := postgres.NewLocalIDPPostgresStorer(pool)
 
 	localIDP := auth.NewLocalIdp(*localIDPCfg, zapLoggerAdapter, localIDPStorer)
