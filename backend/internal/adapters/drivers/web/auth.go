@@ -91,8 +91,8 @@ func NewAuthHandler(
 func (h *authHandler) RegisterRoutes(router fiber.Router) {
 	authApi := router.Group("/auth")
 
-	authApi.Post("/register", h.RegisterUser)
-	authApi.Post("/", h.Login)
+	authApi.Post("/", h.RegisterUser)
+	authApi.Post("/login", h.Login)
 	authApi.Post("/refresh", h.RefreshToken)
 
 	authApi.Use(h.jwtMiddleware)
@@ -111,8 +111,8 @@ func (h *authHandler) RegisterRoutes(router fiber.Router) {
 //	@Param		req	body		LoginRequest	true	"login Request"
 //	@Success	200	{object}	TokenResponse
 //	@Failure	401	{string}	string	"Authentication Failed"
-//	@Failure    422 {object}    ValidationErrorResponse
-//	@Router		/auth/ [post]
+//	@Failure	422	{object}	ValidationErrorResponse
+//	@Router		/auth/login [post]
 func (h *authHandler) Login(c *fiber.Ctx) error {
 	req := new(LoginRequest)
 
@@ -151,7 +151,7 @@ func (h *authHandler) Login(c *fiber.Ctx) error {
 //	@Success	200	{object}	TokenResponse
 //	@Failure	400	{string}	string	"Bad Refresh Token"
 //	@Failure	401	{string}	string	"Expired Token"
-//	@Failure    422 {object}    ValidationErrorResponse
+//	@Failure	422	{object}	ValidationErrorResponse
 //	@Router		/auth/refresh [post]
 func (h *authHandler) RefreshToken(c *fiber.Ctx) error {
 	req := new(RefreshTokenRequest)
@@ -194,8 +194,8 @@ func (h *authHandler) RefreshToken(c *fiber.Ctx) error {
 //	@Param		req	body		RegisterUserRequest	true	"Register User Request"
 //	@Success	201	{object}	TokenResponse
 //	@Failure	409	{string}	string	"User already exists"
-//	@Failure    422 {object}    ValidationErrorResponse
-//	@Router		/auth/register [post]
+//	@Failure	422	{object}	ValidationErrorResponse
+//	@Router		/auth/ [post]
 func (h *authHandler) RegisterUser(c *fiber.Ctx) error {
 	req := new(RegisterUserRequest)
 
@@ -238,10 +238,10 @@ func (h *authHandler) RegisterUser(c *fiber.Ctx) error {
 //	@Accept		json
 //	@Param		req	body	UpdateAccountRequest	true	"Update Account Request"
 //	@Success	200
-//	@Failure	400 {string}	string
-//	@Failure	401 {string}	string
+//	@Failure	400	{string}	string
+//	@Failure	401	{string}	string
 //	@Failure	409	{string}	string	"User already exists"
-//	@Failure    422 {object}    ValidationErrorResponse
+//	@Failure	422	{object}	ValidationErrorResponse
 //	@Router		/auth/ [put]
 func (h *authHandler) UpdateAccount(c *fiber.Ctx) error {
 	id := extractTokenFromContext(c)
@@ -281,8 +281,8 @@ func (h *authHandler) UpdateAccount(c *fiber.Ctx) error {
 //	@Summary	Delete an Account
 //	@Tags		Authentication
 //	@Success	200
-//	@Failure	400 {string}	string
-//	@Failure	401 {string}	string
+//	@Failure	400	{string}	string
+//	@Failure	401	{string}	string
 //	@Router		/auth/ [delete]
 func (h *authHandler) DeleteAccount(c *fiber.Ctx) error {
 	id := extractTokenFromContext(c)
@@ -300,8 +300,8 @@ func (h *authHandler) DeleteAccount(c *fiber.Ctx) error {
 //	@Summary	Get User Info
 //	@Tags		Authentication
 //	@Success	200
-//	@Failure	400 {string}	string
-//	@Failure	401 {string}	string
+//	@Failure	400	{string}	string
+//	@Failure	401	{string}	string
 //	@Router		/auth/userinfo [get]
 func (h *authHandler) UserInfo(c *fiber.Ctx) error {
 	header := c.GetReqHeaders()["Authorization"]

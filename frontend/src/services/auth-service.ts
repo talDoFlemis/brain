@@ -36,7 +36,7 @@ type UserInfoResponse = {
 const signUp = async (data: SignUpRequest): Promise<SignUpResponse> => {
   try {
     const response = await apiProvider.usePost<SignUpResponse, SignUpRequest>(
-      "/auth/register",
+      "/auth/",
       data,
     );
 
@@ -49,7 +49,7 @@ const signUp = async (data: SignUpRequest): Promise<SignUpResponse> => {
 const signIn = async (data: SignInRequest): Promise<SignUpResponse> => {
   try {
     const response = await apiProvider.usePost<SignInResponse, SignInRequest>(
-      "/auth/",
+      "/auth/login",
       data,
     );
 
