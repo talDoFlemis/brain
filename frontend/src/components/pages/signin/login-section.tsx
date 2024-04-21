@@ -1,9 +1,16 @@
+"use client";
+
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import LoginForm from "./login-form";
+import LoginForm, { LoginFormSchema } from "./login-form";
 
 function LoginSection() {
+  const submitForm = async (v: LoginFormSchema) => {
+    console.log(v);
+    return true;
+  };
+
   return (
     <section className="col-span-4 lg:col-span-2 justify-self-center flex flex-col w-full py-12 px-4 gap-10 max-w-lg">
       <Image
@@ -22,9 +29,9 @@ function LoginSection() {
           Digite suas credenciais
         </h3>
       </div>
-      <LoginForm />
+      <LoginForm submitForm={submitForm} />
       <p className="text-sm text-foreground">
-        Nao tem uma conta ainda?
+        Não tem uma conta ainda?
         <Button variant="link" size="sm" asChild>
           <Link href="/sign-up">Registrar</Link>
         </Button>

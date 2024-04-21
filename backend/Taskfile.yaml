@@ -4,7 +4,7 @@ tasks:
   run-web:
     desc: "Run the web handler"
     cmds:
-      - go run ./cmd/web
+      - go run ./cmd/web {{.CLI_ARGS}}
 
   build-web:
     desc: "Build the web handler"
@@ -67,3 +67,8 @@ tasks:
     desc: "Migrate postgres"
     cmds:
       - go run ./cmd/migrate/
+
+  seed:
+    desc: "Seed Database"
+    cmds:
+      - go run ./cmd/seed/

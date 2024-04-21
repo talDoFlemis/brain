@@ -21,9 +21,13 @@ const formSchema = z.object({
   password: z.string(),
 });
 
-type LoginFormSchema = z.infer<typeof formSchema>;
+export type LoginFormSchema = z.infer<typeof formSchema>;
 
-function LoginForm() {
+export type LoginFormProps = {
+  submitForm: (v: LoginFormSchema) => Promise<boolean>;
+};
+
+function LoginForm({ submitForm }: LoginFormProps) {
   const form = useForm<LoginFormSchema>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -32,8 +36,9 @@ function LoginForm() {
     },
   });
 
-  function onSubmit(values: LoginFormSchema) {
-    console.log(values);
+  async function onSubmit(values: LoginFormSchema) {
+    const isOk = await submitForm(values);
+    if (isOk) form.reset();
   }
 
   return (
@@ -44,16 +49,21 @@ function LoginForm() {
           name="email"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-foreground">Email</FormLabel>
+              <FormLabel htmlFor="email-input" className="text-foreground">
+                Email
+              </FormLabel>
               <FormControl>
                 <Input
                   className="text-foreground"
                   type="email"
+                  id="email-input"
                   placeholder="marcelo@example.com"
+                  aria-invalid={!!form.formState.errors.email}
+                  aria-errormessage="email-error"
                   {...field}
                 />
               </FormControl>
-              <FormMessage />
+              <FormMessage id="email-error" />
             </FormItem>
           )}
         />
@@ -62,11 +72,14 @@ function LoginForm() {
           name="password"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-foreground">Senha</FormLabel>
+              <FormLabel htmlFor="password-input" className="text-foreground">
+                Senha
+              </FormLabel>
               <FormControl>
                 <Input
                   className="text-foreground"
                   type="password"
+                  id="password-input"
                   placeholder="*****"
                   {...field}
                 />
@@ -79,7 +92,11 @@ function LoginForm() {
         <Button className="text-xs px-0" variant="link" size="sm" asChild>
           <Link href="#">Esqueci minha senha</Link>
         </Button>
-        <Button size="full" type="submit">
+        <Button
+          disabled={form.formState.isSubmitting}
+          size="full"
+          type="submit"
+        >
           Login
         </Button>
       </form>
