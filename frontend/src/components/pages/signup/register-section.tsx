@@ -30,7 +30,6 @@ function RegisterSection() {
           type: "validate",
           message: "Nome de usuario ja existe",
         });
-        return;
       }
       console.log(error);
     }

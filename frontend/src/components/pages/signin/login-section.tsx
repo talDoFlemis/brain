@@ -21,10 +21,11 @@ function LoginSection() {
         type: "validate",
         message: "Usuario ou senhas incorretas",
       });
-      return;
+      return false;
     }
     
     form.reset()
+    return true
   };
 
   return (

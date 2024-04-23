@@ -31,7 +31,7 @@ export type LoginFormSchema = z.infer<typeof formSchema>;
 export type UseForm = UseFormReturn<LoginFormSchema>;
 
 export type LoginFormProps = {
-  submitForm: (values: LoginFormSchema, form: UseForm) => Promise<void>;
+  submitForm: (values: LoginFormSchema, form: UseForm) => Promise<boolean>;
 };
 
 function LoginForm({ submitForm }: LoginFormProps) {
@@ -46,7 +46,8 @@ function LoginForm({ submitForm }: LoginFormProps) {
   const router = useRouter()
 
   async function onSubmit(values: LoginFormSchema) {
-    await submitForm(values, form);
+    const valid = await submitForm(values, form);
+    if (!valid) return;
     router.push(SIGN_IN_CALLBACK_URL)
   }
 
@@ -58,21 +59,21 @@ function LoginForm({ submitForm }: LoginFormProps) {
           name="username"
           render={({ field }) => (
             <FormItem>
-              <FormLabel htmlFor="email-input" className="text-foreground">
-                Email
+              <FormLabel htmlFor="username-input" className="text-foreground">
+                Username
               </FormLabel>
               <FormControl>
                 <Input
                   className="text-foreground"
-                  type="email"
-                  id="email-input"
-                  placeholder="marcelo@example.com"
+                  type="text"
+                  id="username-input"
+                  placeholder="marcelo jr"
                   aria-invalid={!!form.formState.errors.username}
-                  aria-errormessage="email-error"
+                  aria-errormessage="username-error"
                   {...field}
                 />
               </FormControl>
-              <FormMessage id="email-error" />
+              <FormMessage id="username-error" />
             </FormItem>
           )}
         />

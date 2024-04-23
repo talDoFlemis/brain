@@ -2,6 +2,21 @@ import { act, render, screen, waitFor } from "@/utils/vitest/utilities";
 import { Mock } from "vitest";
 import RegisterForm from "./register-form";
 import { axe } from "jest-axe";
+import userEvent from "@testing-library/user-event";
+
+const getRegisterFormInputs = () => {
+  const usernameInput = screen.getByLabelText(/username/i);
+  const emailInput = screen.getByLabelText(/email/i);
+  const passwordInput = screen.getByLabelText(/^senha/i);
+  const confirmPasswordInput = screen.getByLabelText(/confirmar senha/i);
+
+  return {
+    usernameInput,
+    emailInput,
+    passwordInput,
+    confirmPasswordInput,
+  }
+}
 
 const renderRegisterForm = (fn: Mock<any, any>) => {
   const { user } = render(<RegisterForm submitForm={fn} />);
@@ -24,7 +39,12 @@ const renderRegisterForm = (fn: Mock<any, any>) => {
 const generateSubmitFn = (ms: number = 0, value: boolean = true) => {
   return vi.fn(async () => {
     await new Promise((resolve) => setTimeout(resolve, ms));
-    return value;
+    
+    if (!value) return;
+
+    Object.values(getRegisterFormInputs()).forEach((input) => {
+      userEvent.clear(input)
+    })
   });
 };
 
@@ -67,10 +87,12 @@ describe("Register Form tests", () => {
     });
 
     // Assert
-    expect(usernameInput).toHaveValue("");
-    expect(emailInput).toHaveValue("");
-    expect(passwordInput).toHaveValue("");
-    expect(confirmPasswordInput).toHaveValue("");
+    await waitFor(() => {
+      expect(usernameInput).toHaveValue("");
+      expect(emailInput).toHaveValue("");
+      expect(passwordInput).toHaveValue("");
+      expect(confirmPasswordInput).toHaveValue("");
+    })
     expect(fn).toHaveBeenCalledOnce();
   });
 
