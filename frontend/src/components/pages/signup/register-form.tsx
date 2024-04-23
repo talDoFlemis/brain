@@ -1,9 +1,8 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
+import { UseFormReturn, useForm } from "react-hook-form";
 import { z } from "zod";
-import authService from "@/services/auth-service";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -15,27 +14,34 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { signIn } from "next-auth/react";
-import { SIGN_IN_CALLBACK_URL } from "@/utils/constants";
-import { isAxiosError } from "axios";
 
-const formSchema = z.object({
-  username: z
-    .string()
-    .min(5, { message: "Nome deve ter conter 5 ou mais caracteres" })
-    .max(50, { message: "Nome deve ter no maximo 50 caracteres" }),
-  email: z.string().email({ message: "Insira um email valido" }),
-  password: z
-    .string()
-    .min(8, { message: "Senha deve conter 8 ou mais caracteres" }),
-  confirm: z
-    .string()
-    .min(8, { message: "Senha deve conter 8 ou mais caracteres" }),
-});
+const formSchema = z
+  .object({
+    username: z
+      .string()
+      .min(5, { message: "Nome deve ter conter 5 ou mais caracteres" })
+      .max(50, { message: "Nome deve ter no maximo 50 caracteres" }),
+    email: z.string().email({ message: "Insira um email valido" }),
+    password: z
+      .string()
+      .min(8, { message: "Senha deve conter 8 ou mais caracteres" }),
+    confirm: z
+      .string()
+      .min(8, { message: "Senha deve conter 8 ou mais caracteres" }),
+  })
+  .refine((data) => data.password === data.confirm, {
+    message: "Senhas distintas",
+    path: ["confirm"],
+  });
 
-type RegisterFormSchema = z.infer<typeof formSchema>;
+export type RegisterFormSchema = z.infer<typeof formSchema>;
+export type UseForm = UseFormReturn<RegisterFormSchema>
 
-function RegisterForm() {
+export type RegisterFormProps = {
+  submitForm: (values: RegisterFormSchema, form: UseForm) => Promise<void>;
+};
+
+function RegisterForm({ submitForm }: RegisterFormProps) {
   const form = useForm<RegisterFormSchema>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -47,37 +53,7 @@ function RegisterForm() {
   });
 
   async function onSubmit(values: RegisterFormSchema) {
-    if (values.password !== values.confirm) {
-      form.setError("confirm", {
-        type: "validate",
-        message: "Senhas distintas",
-      });
-      return;
-    }
-
-    try {
-      await authService.signUp({
-        username: values.username,
-        email: values.email,
-        password: values.password,
-      });
-
-      // Signs the user in, and redirects him to the home page
-      await signIn("credentials", {
-        username: values.username,
-        password: values.password,
-        callbackUrl: SIGN_IN_CALLBACK_URL,
-      });
-    } catch (error) {
-      if (isAxiosError(error) && error.response?.status == 409) {
-        form.setError("username", {
-          type: "validate",
-          message: "Nome de usuario ja existe",
-        });
-        return;
-      }
-      console.log(error);
-    }
+    await submitForm(values, form);
   }
 
   return (
@@ -88,16 +64,21 @@ function RegisterForm() {
           name="username"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-foreground">Username</FormLabel>
+              <FormLabel htmlFor="username-input" className="text-foreground">
+                Username
+              </FormLabel>
               <FormControl>
                 <Input
                   className="text-foreground"
                   type="text"
+                  id="username-input"
+                  aria-invalid={!!form.formState.errors.username}
+                  aria-errormessage="username-error"
                   placeholder="marcelo jr"
                   {...field}
                 />
               </FormControl>
-              <FormMessage />
+              <FormMessage id="username-error" />
             </FormItem>
           )}
         />
@@ -106,16 +87,21 @@ function RegisterForm() {
           name="email"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-foreground">Email</FormLabel>
+              <FormLabel htmlFor="email-input" className="text-foreground">
+                Email
+              </FormLabel>
               <FormControl>
                 <Input
                   className="text-foreground"
                   type="email"
+                  id="email-input"
+                  aria-invalid={!!form.formState.errors.email}
+                  aria-errormessage="email-error"
                   placeholder="marcelo@example.com"
                   {...field}
                 />
               </FormControl>
-              <FormMessage />
+              <FormMessage id="email-error" />
             </FormItem>
           )}
         />
@@ -124,16 +110,21 @@ function RegisterForm() {
           name="password"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-foreground">Senha</FormLabel>
+              <FormLabel htmlFor="password-input" className="text-foreground">
+                Senha
+              </FormLabel>
               <FormControl>
                 <Input
                   className="text-foreground"
                   type="password"
+                  id="password-input"
+                  aria-invalid={!!form.formState.errors.password}
+                  aria-errormessage="password-error"
                   placeholder="*****"
                   {...field}
                 />
               </FormControl>
-              <FormMessage />
+              <FormMessage id="password-error" />
             </FormItem>
           )}
         />
@@ -143,20 +134,32 @@ function RegisterForm() {
           name="confirm"
           render={({ field }) => (
             <FormItem className="pb-3">
-              <FormLabel className="text-foreground">Confirmar senha</FormLabel>
+              <FormLabel
+                htmlFor="password-confirm-input"
+                className="text-foreground"
+              >
+                Confirmar senha
+              </FormLabel>
               <FormControl>
                 <Input
+                  id="password-confirm-input"
                   className="text-foreground"
                   type="password"
                   placeholder="*****"
+                  aria-invalid={!!form.formState.errors.confirm}
+                  aria-errormessage="confirm-error"
                   {...field}
                 />
               </FormControl>
-              <FormMessage />
+              <FormMessage id="confirm-error" />
             </FormItem>
           )}
         />
-        <Button size="full" type="submit">
+        <Button
+          disabled={form.formState.isSubmitting}
+          size="full"
+          type="submit"
+        >
           Registrar
         </Button>
       </form>

@@ -1,0 +1,13 @@
+.dockerignore
+.gcloudignore
+.gitignore
+test/
+tmp/
+c.out
+./brain.test
+./Taskfile.yaml
+./Dockerfile
+./.air.toml
+./.task/
+./README.md
+./config.json

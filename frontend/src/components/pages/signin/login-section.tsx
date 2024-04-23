@@ -1,9 +1,32 @@
+"use client";
+
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import LoginForm from "./login-form";
+import LoginForm, { LoginFormSchema, UseForm } from "./login-form";
+import { signIn } from "next-auth/react";
+import { SIGN_IN_CALLBACK_URL } from "@/utils/constants";
 
 function LoginSection() {
+  const submitForm = async (values: LoginFormSchema, form: UseForm) => {
+    const response = await signIn("credentials", {
+      username: values.username,
+      password: values.password,
+      redirect: false,
+      callbackUrl: SIGN_IN_CALLBACK_URL,
+    });
+
+    if (response?.error) {
+      form.setError("username", {
+        type: "validate",
+        message: "Usuario ou senhas incorretas",
+      });
+      return;
+    }
+    
+    form.reset()
+  };
+
   return (
     <section className="col-span-4 lg:col-span-2 justify-self-center flex flex-col w-full py-12 px-4 gap-10 max-w-lg">
       <Image
@@ -22,9 +45,9 @@ function LoginSection() {
           Digite suas credenciais
         </h3>
       </div>
-      <LoginForm />
+      <LoginForm submitForm={submitForm} />
       <p className="text-sm text-foreground">
-        Nao tem uma conta ainda?
+        Não tem uma conta ainda?
         <Button variant="link" size="sm" asChild>
           <Link href="/sign-up">Registrar</Link>
         </Button>

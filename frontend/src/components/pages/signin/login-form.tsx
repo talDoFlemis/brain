@@ -1,7 +1,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
+import { useForm, UseFormReturn } from "react-hook-form";
 import { z } from "zod";
 
 import { Button } from "@/components/ui/button";
@@ -15,9 +15,8 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import Link from "next/link";
-import { signIn } from "next-auth/react";
-import { SIGN_IN_CALLBACK_URL } from "@/utils/constants";
 import { useRouter } from "next/navigation";
+import { SIGN_IN_CALLBACK_URL } from "@/utils/constants";
 
 const formSchema = z.object({
   username: z
@@ -28,9 +27,14 @@ const formSchema = z.object({
     .min(8, { message: "Senha deve conter 8 ou mais caracteres" }),
 });
 
-type LoginFormSchema = z.infer<typeof formSchema>;
+export type LoginFormSchema = z.infer<typeof formSchema>;
+export type UseForm = UseFormReturn<LoginFormSchema>;
 
-function LoginForm() {
+export type LoginFormProps = {
+  submitForm: (values: LoginFormSchema, form: UseForm) => Promise<void>;
+};
+
+function LoginForm({ submitForm }: LoginFormProps) {
   const form = useForm<LoginFormSchema>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -39,25 +43,11 @@ function LoginForm() {
     },
   });
 
-  const router = useRouter();
+  const router = useRouter()
 
   async function onSubmit(values: LoginFormSchema) {
-    const response = await signIn("credentials", {
-      username: values.username,
-      password: values.password,
-      redirect: false,
-      callbackUrl: SIGN_IN_CALLBACK_URL,
-    });
-
-    if (response?.error) {
-      form.setError("username", {
-        type: "validate",
-        message: "Usuario ou senhas incorretas",
-      });
-      return;
-    }
-
-    router.push(SIGN_IN_CALLBACK_URL);
+    await submitForm(values, form);
+    router.push(SIGN_IN_CALLBACK_URL)
   }
 
   return (
@@ -68,16 +58,21 @@ function LoginForm() {
           name="username"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-foreground">Username</FormLabel>
+              <FormLabel htmlFor="email-input" className="text-foreground">
+                Email
+              </FormLabel>
               <FormControl>
                 <Input
                   className="text-foreground"
-                  type="text"
-                  placeholder="marcelo jr"
+                  type="email"
+                  id="email-input"
+                  placeholder="marcelo@example.com"
+                  aria-invalid={!!form.formState.errors.username}
+                  aria-errormessage="email-error"
                   {...field}
                 />
               </FormControl>
-              <FormMessage />
+              <FormMessage id="email-error" />
             </FormItem>
           )}
         />
@@ -86,11 +81,14 @@ function LoginForm() {
           name="password"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-foreground">Senha</FormLabel>
+              <FormLabel htmlFor="password-input" className="text-foreground">
+                Senha
+              </FormLabel>
               <FormControl>
                 <Input
                   className="text-foreground"
                   type="password"
+                  id="password-input"
                   placeholder="*****"
                   {...field}
                 />
@@ -103,7 +101,11 @@ function LoginForm() {
         <Button className="text-xs px-0" variant="link" size="sm" asChild>
           <Link href="#">Esqueci minha senha</Link>
         </Button>
-        <Button size="full" type="submit">
+        <Button
+          disabled={form.formState.isSubmitting}
+          size="full"
+          type="submit"
+        >
           Login
         </Button>
       </form>

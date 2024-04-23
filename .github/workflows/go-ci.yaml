@@ -2,7 +2,7 @@ name: Golang CI
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ["main"]
     paths: ["backend/**"]
   pull_request:
     branches: ["main", "dev"]
@@ -11,25 +11,20 @@ on:
 permissions:
   contents: read
 
-jobs:
-  ci:
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ./backend
+defaults:
+  run:
+    working-directory: ./backend
 
+jobs:
+  build:
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
 
       - name: Setup Go
         uses: actions/setup-go@v5
         with:
-          go-version: '1.22.x'
-
-      - name: Install dependencies
-        run: |
-          go install golang.org/x/vuln/cmd/govulncheck@latest
-          go install gotest.tools/gotestsum@latest
+          go-version: "1.22.x"
 
       - name: Install Task
         uses: arduino/setup-task@v1
@@ -40,17 +35,62 @@ jobs:
       - name: Format Check
         run: task check-format
 
+      - name: Build
+        run: task build-web
+
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
       - name: Lint
         uses: golangci/golangci-lint-action@v4
         with:
           version: v1.54
           working-directory: backend
 
-      - name: Build
-        run: task build-web
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.22.x"
+
+      - name: Install dependencies
+        run: |
+          go install gotest.tools/gotestsum@latest
+
+      - name: Install Task
+        uses: arduino/setup-task@v1
+        with:
+          version: 3.x
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Test with the Go CLI
         run: task test-all
+
+  check-vuln:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.22.x"
+
+      - name: Install Task
+        uses: arduino/setup-task@v1
+        with:
+          version: 3.x
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Install dependencies
+        run: |
+          go install golang.org/x/vuln/cmd/govulncheck@latest
 
       - name: Check for vulnerabilities
         run: task check-vuln
