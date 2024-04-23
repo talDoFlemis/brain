@@ -43,12 +43,12 @@ function LoginForm({ submitForm }: LoginFormProps) {
     },
   });
 
-  const router = useRouter()
+  const router = useRouter();
 
   async function onSubmit(values: LoginFormSchema) {
     const valid = await submitForm(values, form);
     if (!valid) return;
-    router.push(SIGN_IN_CALLBACK_URL)
+    router.push(SIGN_IN_CALLBACK_URL);
   }
 
   return (

@@ -9,10 +9,10 @@ vi.mock("next/navigation", async () => ({
   useRouter() {
     return {
       push: () => null,
-      prefetch: () => null
-    }
-  }
-}))
+      prefetch: () => null,
+    };
+  },
+}));
 
 describe("Login Form Tests", () => {
   const renderLoginForm = (fn: Mock<any, any>) => {
@@ -39,7 +39,8 @@ describe("Login Form Tests", () => {
       return true;
     });
 
-    const { user, userNameInput, passwordInput, submitBtn } = renderLoginForm(fn);
+    const { user, userNameInput, passwordInput, submitBtn } =
+      renderLoginForm(fn);
 
     // Act
     await user.type(userNameInput, "marcelo jr");
@@ -50,7 +51,7 @@ describe("Login Form Tests", () => {
     await waitFor(() => {
       expect(userNameInput).toHaveValue("");
       expect(passwordInput).toHaveValue("");
-    })
+    });
     expect(screen.getByText(/esqueci minha senha/i));
     expect(fn).toHaveBeenCalledOnce();
   });
@@ -61,7 +62,8 @@ describe("Login Form Tests", () => {
       await sleep(0);
       return true;
     });
-    const { user, userNameInput, passwordInput, submitBtn } = renderLoginForm(fn);
+    const { user, userNameInput, passwordInput, submitBtn } =
+      renderLoginForm(fn);
     const badUserName = "mx30";
 
     // Act
@@ -71,7 +73,9 @@ describe("Login Form Tests", () => {
 
     //Assert
     expect(userNameInput).toHaveValue(badUserName);
-    expect(userNameInput).toHaveAccessibleErrorMessage(/Nome deve ter conter 5 ou mais caracteres/i);
+    expect(userNameInput).toHaveAccessibleErrorMessage(
+      /Nome deve ter conter 5 ou mais caracteres/i,
+    );
     expect(fn).not.toHaveBeenCalledOnce();
   });
 
@@ -81,7 +85,8 @@ describe("Login Form Tests", () => {
       await sleep(0);
       return false;
     });
-    const { user, userNameInput, passwordInput, submitBtn } = renderLoginForm(fn);
+    const { user, userNameInput, passwordInput, submitBtn } =
+      renderLoginForm(fn);
     const goodUserName = "marcelo jr";
     const goodPass = "melikofornite123";
 
@@ -102,7 +107,8 @@ describe("Login Form Tests", () => {
       await sleep(100);
       return true;
     });
-    const { user, userNameInput, passwordInput, submitBtn } = renderLoginForm(fn);
+    const { user, userNameInput, passwordInput, submitBtn } =
+      renderLoginForm(fn);
     const goodUserName = "marcelo jr";
     const goodPass = "melikofornite123";
 

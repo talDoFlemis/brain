@@ -6,10 +6,10 @@ vi.mock("next/navigation", async () => ({
   useRouter() {
     return {
       push: () => null,
-      prefetch: () => null
-    }
-  }
-}))
+      prefetch: () => null,
+    };
+  },
+}));
 
 describe("Login Section Tests", () => {
   it("Should render the login section", async () => {

@@ -23,9 +23,9 @@ function LoginSection() {
       });
       return false;
     }
-    
-    form.reset()
-    return true
+
+    form.reset();
+    return true;
   };
 
   return (

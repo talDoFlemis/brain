@@ -35,7 +35,7 @@ const formSchema = z
   });
 
 export type RegisterFormSchema = z.infer<typeof formSchema>;
-export type UseForm = UseFormReturn<RegisterFormSchema>
+export type UseForm = UseFormReturn<RegisterFormSchema>;
 
 export type RegisterFormProps = {
   submitForm: (values: RegisterFormSchema, form: UseForm) => Promise<void>;

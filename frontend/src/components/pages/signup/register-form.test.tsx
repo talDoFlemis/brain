@@ -15,8 +15,8 @@ const getRegisterFormInputs = () => {
     emailInput,
     passwordInput,
     confirmPasswordInput,
-  }
-}
+  };
+};
 
 const renderRegisterForm = (fn: Mock<any, any>) => {
   const { user } = render(<RegisterForm submitForm={fn} />);
@@ -39,12 +39,12 @@ const renderRegisterForm = (fn: Mock<any, any>) => {
 const generateSubmitFn = (ms: number = 0, value: boolean = true) => {
   return vi.fn(async () => {
     await new Promise((resolve) => setTimeout(resolve, ms));
-    
+
     if (!value) return;
 
     Object.values(getRegisterFormInputs()).forEach((input) => {
-      userEvent.clear(input)
-    })
+      userEvent.clear(input);
+    });
   });
 };
 
@@ -92,7 +92,7 @@ describe("Register Form tests", () => {
       expect(emailInput).toHaveValue("");
       expect(passwordInput).toHaveValue("");
       expect(confirmPasswordInput).toHaveValue("");
-    })
+    });
     expect(fn).toHaveBeenCalledOnce();
   });
 
