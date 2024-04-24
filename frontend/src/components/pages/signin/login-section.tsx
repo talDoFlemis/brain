@@ -16,7 +16,6 @@ function LoginSection() {
       username: values.username,
       password: values.password,
       redirect: false,
-      callbackUrl: SIGN_IN_CALLBACK_URL,
     });
 
     if (response?.error) {

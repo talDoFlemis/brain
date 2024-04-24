@@ -96,7 +96,7 @@ function LoginForm({ submitForm }: LoginFormProps) {
         />
 
         <Button className="text-xs px-0" variant="link" size="sm" asChild>
-          <Link href="#">Esqueci minha senha</Link>
+          <Link href="/forgot-password">Esqueci minha senha</Link>
         </Button>
         <Button
           disabled={form.formState.isSubmitting}
