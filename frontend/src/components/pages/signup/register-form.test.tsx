@@ -21,11 +21,9 @@ const renderRegisterForm = (fn: Mock<any, any>) => {
   };
 };
 
-const generateSubmitFn = (ms: number = 0, value: boolean = true) => {
+const generateSubmitFn = (ms: number = 0) => {
   return vi.fn(async () => {
     await new Promise((resolve) => setTimeout(resolve, ms));
-
-    return value;
   });
 };
 
@@ -198,7 +196,7 @@ describe("Register Form tests", () => {
   });
 
   it("Should not reset form if promise fails", async () => {
-    const fn = generateSubmitFn(0, false);
+    const fn = generateSubmitFn(0);
 
     const {
       user,
