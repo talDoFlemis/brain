@@ -5,6 +5,9 @@ on:
   pull_request:
     branches: [main, dev]
 
+env:
+  NEXTAUTH_URL: "http://localhost:3000"
+
 jobs:
   test:
     timeout-minutes: 60
