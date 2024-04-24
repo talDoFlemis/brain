@@ -4,7 +4,7 @@ tasks:
   db-up:
     desc: "Up a postgres instance"
     cmds:
-      - docker compose up database
+      - docker compose up database {{.CLI_ARGS}}
 
 includes:
   frontend:
