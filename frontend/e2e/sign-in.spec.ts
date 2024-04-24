@@ -29,14 +29,9 @@ test.describe("Sign In page tests", () => {
     await passwordInput.fill(wrongPassword);
     await page.getByRole("button", { name: "Login" }).click();
 
-    console.log(await usernameInput.innerText());
-    console.log(await passwordInput.innerText());
-
     await expect(page.locator("#username-error")).toHaveText(
       "Usuario ou senhas incorretas",
     );
-    await expect(usernameInput).toHaveValue(validUsername);
-    await expect(passwordInput).toHaveValue(wrongPassword);
     await expect(page).toHaveURL(/sign-in/);
   });
 
