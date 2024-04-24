@@ -3,12 +3,31 @@
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import LoginForm, { LoginFormSchema } from "./login-form";
+import LoginForm, { LoginFormSchema, UseForm } from "./login-form";
+import { signIn } from "next-auth/react";
+import { useRouter } from "next/navigation";
+import { SIGN_IN_CALLBACK_URL } from "@/utils/constants";
 
 function LoginSection() {
-  const submitForm = async (v: LoginFormSchema) => {
-    console.log(v);
-    return true;
+  const router = useRouter();
+
+  const submitForm = async (values: LoginFormSchema, form: UseForm) => {
+    const response = await signIn("credentials", {
+      username: values.username,
+      password: values.password,
+      redirect: false,
+    });
+
+    if (response?.error) {
+      form.setError("username", {
+        type: "validate",
+        message: "Usuario ou senhas incorretas",
+      });
+      return;
+    }
+
+    form.reset();
+    router.push(SIGN_IN_CALLBACK_URL);
   };
 
   return (

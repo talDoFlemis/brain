@@ -3,13 +3,36 @@
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import RegisterForm, { RegisterFormSchema } from "./register-form";
+import RegisterForm, { RegisterFormSchema, UseForm } from "./register-form";
+import authService from "@/services/auth-service";
+import { signIn } from "next-auth/react";
+import { SIGN_IN_CALLBACK_URL } from "@/utils/constants";
+import { isAxiosError } from "axios";
 
 function RegisterSection() {
-  async function submitForm(v: RegisterFormSchema) {
-    await new Promise((resolve) => setTimeout(resolve, 0));
-    console.log(v);
-    return true;
+  async function submitForm(values: RegisterFormSchema, form: UseForm) {
+    try {
+      await authService.signUp({
+        username: values.username,
+        email: values.email,
+        password: values.password,
+      });
+
+      // Signs the user in, and redirects him to the home page
+      await signIn("credentials", {
+        username: values.username,
+        password: values.password,
+        callbackUrl: SIGN_IN_CALLBACK_URL,
+      });
+    } catch (error) {
+      if (isAxiosError(error) && error.response?.status == 409) {
+        form.setError("username", {
+          type: "validate",
+          message: "Nome de usuario ja existe",
+        });
+      }
+      console.log(error);
+    }
   }
 
   return (

@@ -1,6 +1,16 @@
 import { render, screen } from "@/utils/vitest/utilities";
 import LoginSection from "./login-section";
 
+// mock useRouter
+vi.mock("next/navigation", async () => ({
+  useRouter() {
+    return {
+      push: () => null,
+      prefetch: () => null,
+    };
+  },
+}));
+
 describe("Login Section Tests", () => {
   it("Should render the login section", async () => {
     // Arrange

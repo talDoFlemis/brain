@@ -25,6 +25,8 @@ jobs:
         uses: actions/setup-go@v5
         with:
           go-version: "1.22.x"
+          cache-dependency-path: backend/go.sum
+
 
       - name: Install Task
         uses: arduino/setup-task@v1
@@ -58,6 +60,7 @@ jobs:
         uses: actions/setup-go@v5
         with:
           go-version: "1.22.x"
+          cache-dependency-path: backend/go.sum
 
       - name: Install dependencies
         run: |
@@ -81,6 +84,7 @@ jobs:
         uses: actions/setup-go@v5
         with:
           go-version: "1.22.x"
+          cache-dependency-path: backend/go.sum
 
       - name: Install Task
         uses: arduino/setup-task@v1

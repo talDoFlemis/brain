@@ -1,7 +1,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
+import { UseFormReturn, useForm } from "react-hook-form";
 import { z } from "zod";
 
 import { Button } from "@/components/ui/button";
@@ -35,9 +35,10 @@ const formSchema = z
   });
 
 export type RegisterFormSchema = z.infer<typeof formSchema>;
+export type UseForm = UseFormReturn<RegisterFormSchema>;
 
 export type RegisterFormProps = {
-  submitForm: (v: RegisterFormSchema) => Promise<boolean>;
+  submitForm: (values: RegisterFormSchema, form: UseForm) => Promise<void>;
 };
 
 function RegisterForm({ submitForm }: RegisterFormProps) {
@@ -52,8 +53,7 @@ function RegisterForm({ submitForm }: RegisterFormProps) {
   });
 
   async function onSubmit(values: RegisterFormSchema) {
-    const isOk = await submitForm(values);
-    if (isOk) form.reset();
+    await submitForm(values, form);
   }
 
   return (
