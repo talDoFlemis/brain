@@ -44,7 +44,7 @@ export default defineConfig({
   ],
 
   webServer: {
-    command: process.env.CI ? "task build-and-start" : "task dev",
+    command: "task dev",
     url: baseURL,
     reuseExistingServer: true,
   },
