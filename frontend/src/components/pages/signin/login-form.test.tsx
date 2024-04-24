@@ -2,17 +2,6 @@ import { act, render, screen, waitFor } from "@/utils/vitest/utilities";
 import LoginForm from "./login-form";
 import { Mock } from "vitest";
 import { axe } from "jest-axe";
-import userEvent from "@testing-library/user-event";
-
-// mock useRouter
-vi.mock("next/navigation", async () => ({
-  useRouter() {
-    return {
-      push: () => null,
-      prefetch: () => null,
-    };
-  },
-}));
 
 describe("Login Form Tests", () => {
   const renderLoginForm = (fn: Mock<any, any>) => {
@@ -31,12 +20,6 @@ describe("Login Form Tests", () => {
     // Arrange
     const fn = vi.fn(async () => {
       await sleep(0);
-      // mock clear function
-      const userNameInput = screen.getByLabelText("Username");
-      const passwordInput = screen.getByLabelText("Senha");
-      await userEvent.clear(userNameInput);
-      await userEvent.clear(passwordInput);
-      return true;
     });
 
     const { user, userNameInput, passwordInput, submitBtn } =
@@ -48,10 +31,8 @@ describe("Login Form Tests", () => {
     await user.click(submitBtn);
 
     //Assert
-    await waitFor(() => {
-      expect(userNameInput).toHaveValue("");
-      expect(passwordInput).toHaveValue("");
-    });
+    expect(userNameInput).toHaveValue("marcelo jr")
+    expect(passwordInput).toHaveValue("melikofornite123")
     expect(screen.getByText(/esqueci minha senha/i));
     expect(fn).toHaveBeenCalledOnce();
   });
@@ -60,7 +41,6 @@ describe("Login Form Tests", () => {
     // Arrange
     const fn = vi.fn(async () => {
       await sleep(0);
-      return true;
     });
     const { user, userNameInput, passwordInput, submitBtn } =
       renderLoginForm(fn);
@@ -79,11 +59,33 @@ describe("Login Form Tests", () => {
     expect(fn).not.toHaveBeenCalledOnce();
   });
 
+  it("Should not submit with invalid password", async () => {
+    // Arrange 
+    const fn = vi.fn(async () => {
+      await sleep(0);
+    });
+    const { user, userNameInput, passwordInput, submitBtn } =
+      renderLoginForm(fn);
+    const badPassword = "12345"
+    // Act 
+    await user.type(userNameInput, "marcelo jr");
+    await user.type(passwordInput, badPassword);
+    await user.click(submitBtn);
+    
+    // Assert
+    expect(userNameInput).toHaveValue("marcelo jr")
+    expect(passwordInput).toHaveValue(badPassword)
+    expect(passwordInput).toHaveAccessibleErrorMessage(
+      /Senha deve conter 8 ou mais caracteres/i,
+    );
+    expect(fn).not.toHaveBeenCalledOnce();
+  })
+
   it("Should not reset form if fails", async () => {
     // Arrange
     const fn = vi.fn(async () => {
       await sleep(0);
-      return false;
+      return;
     });
     const { user, userNameInput, passwordInput, submitBtn } =
       renderLoginForm(fn);
@@ -105,7 +107,6 @@ describe("Login Form Tests", () => {
   it("Should disable btn until promises resolves", async () => {
     const fn = vi.fn(async () => {
       await sleep(100);
-      return true;
     });
     const { user, userNameInput, passwordInput, submitBtn } =
       renderLoginForm(fn);
@@ -130,7 +131,6 @@ describe("Login Form Tests", () => {
   it("Should be accessible", async () => {
     const fn = vi.fn(async () => {
       await sleep(100);
-      return true;
     });
 
     const { container } = render(<LoginForm submitForm={fn} />);

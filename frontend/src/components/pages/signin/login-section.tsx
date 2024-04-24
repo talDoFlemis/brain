@@ -5,9 +5,12 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import LoginForm, { LoginFormSchema, UseForm } from "./login-form";
 import { signIn } from "next-auth/react";
+import { useRouter } from "next/navigation";
 import { SIGN_IN_CALLBACK_URL } from "@/utils/constants";
 
 function LoginSection() {
+  const router = useRouter();
+
   const submitForm = async (values: LoginFormSchema, form: UseForm) => {
     const response = await signIn("credentials", {
       username: values.username,
@@ -21,11 +24,11 @@ function LoginSection() {
         type: "validate",
         message: "Usuario ou senhas incorretas",
       });
-      return false;
+      return
     }
 
     form.reset();
-    return true;
+    router.push(SIGN_IN_CALLBACK_URL);
   };
 
   return (

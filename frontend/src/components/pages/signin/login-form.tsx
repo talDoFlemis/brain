@@ -15,8 +15,6 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { SIGN_IN_CALLBACK_URL } from "@/utils/constants";
 
 const formSchema = z.object({
   username: z
@@ -31,7 +29,7 @@ export type LoginFormSchema = z.infer<typeof formSchema>;
 export type UseForm = UseFormReturn<LoginFormSchema>;
 
 export type LoginFormProps = {
-  submitForm: (values: LoginFormSchema, form: UseForm) => Promise<boolean>;
+  submitForm: (values: LoginFormSchema, form: UseForm) => Promise<void>;
 };
 
 function LoginForm({ submitForm }: LoginFormProps) {
@@ -43,12 +41,8 @@ function LoginForm({ submitForm }: LoginFormProps) {
     },
   });
 
-  const router = useRouter();
-
   async function onSubmit(values: LoginFormSchema) {
-    const valid = await submitForm(values, form);
-    if (!valid) return;
-    router.push(SIGN_IN_CALLBACK_URL);
+    await submitForm(values, form);
   }
 
   return (
@@ -91,10 +85,12 @@ function LoginForm({ submitForm }: LoginFormProps) {
                   type="password"
                   id="password-input"
                   placeholder="*****"
+                  aria-invalid={!!form.formState.errors.password}
+                  aria-errormessage="password-error"
                   {...field}
                 />
               </FormControl>
-              <FormMessage />
+              <FormMessage id="password-error" />
             </FormItem>
           )}
         />
