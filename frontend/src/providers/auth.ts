@@ -7,6 +7,7 @@ import {
   isTokenExpired,
 } from "@/utils/token";
 import { isAxiosError } from "axios";
+import { NEXT_AUTH_SECRET } from "@/utils/constants";
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -40,7 +41,7 @@ export const authOptions: NextAuthOptions = {
     signOut: "/sign-in",
     newUser: "/sign-up",
   },
-  secret: process.env.NEXTAUTH_SECRET,
+  secret: NEXT_AUTH_SECRET,
   callbacks: {
     async jwt({ token, user }) {
       // User just signed in

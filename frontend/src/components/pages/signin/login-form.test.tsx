@@ -31,8 +31,8 @@ describe("Login Form Tests", () => {
     await user.click(submitBtn);
 
     //Assert
-    expect(userNameInput).toHaveValue("marcelo jr")
-    expect(passwordInput).toHaveValue("melikofornite123")
+    expect(userNameInput).toHaveValue("marcelo jr");
+    expect(passwordInput).toHaveValue("melikofornite123");
     expect(screen.getByText(/esqueci minha senha/i));
     expect(fn).toHaveBeenCalledOnce();
   });
@@ -60,26 +60,26 @@ describe("Login Form Tests", () => {
   });
 
   it("Should not submit with invalid password", async () => {
-    // Arrange 
+    // Arrange
     const fn = vi.fn(async () => {
       await sleep(0);
     });
     const { user, userNameInput, passwordInput, submitBtn } =
       renderLoginForm(fn);
-    const badPassword = "12345"
-    // Act 
+    const badPassword = "12345";
+    // Act
     await user.type(userNameInput, "marcelo jr");
     await user.type(passwordInput, badPassword);
     await user.click(submitBtn);
-    
+
     // Assert
-    expect(userNameInput).toHaveValue("marcelo jr")
-    expect(passwordInput).toHaveValue(badPassword)
+    expect(userNameInput).toHaveValue("marcelo jr");
+    expect(passwordInput).toHaveValue(badPassword);
     expect(passwordInput).toHaveAccessibleErrorMessage(
       /Senha deve conter 8 ou mais caracteres/i,
     );
     expect(fn).not.toHaveBeenCalledOnce();
-  })
+  });
 
   it("Should not reset form if fails", async () => {
     // Arrange

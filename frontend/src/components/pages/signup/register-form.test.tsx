@@ -25,7 +25,7 @@ const generateSubmitFn = (ms: number = 0, value: boolean = true) => {
   return vi.fn(async () => {
     await new Promise((resolve) => setTimeout(resolve, ms));
 
-    return value
+    return value;
   });
 };
 
