@@ -13,6 +13,10 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+	err = koanf.LoadFromEnv("BRAIN_")
+	if err != nil {
+		log.Fatal(err)
+	}
 	pgCfg, err := config.NewPostgresConfig()
 	if err != nil {
 		log.Fatal(err)

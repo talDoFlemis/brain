@@ -1,0 +1,43 @@
+name: Migrate database
+
+on:
+  push:
+    branches: ["main"]
+    paths: ["backend/internal/adapters/driven/postgres/migrations/**"]
+
+defaults:
+  run:
+    working-directory: ./backend
+
+permissions:
+  contents: read
+
+jobs:
+  if_merged:
+    if: github.event.pull_request.merged == true
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.22.x"
+          cache-dependency-path: backend/go.sum
+
+      - name: Install Task
+        uses: arduino/setup-task@v1
+        with:
+          version: 3.x
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Migrate database
+        run: task migrate
+        env:
+          BRAIN_POSTGRES_HOST: ${{ secrets.POSTGRES_HOST }}
+          BRAIN_POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
+          BRAIN_POSTGRES_PORT: ${{ secrets.POSTGRES_PORT }}
+          BRAIN_POSTGRES_DATABASE: ${{ secrets.POSTGRES_DATABASE }}
+          BRAIN_POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
