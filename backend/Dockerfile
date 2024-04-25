@@ -17,6 +17,7 @@ LABEL email="coderflemis@gmail.com"
 
 COPY --from=builder /app/server ./
 COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
+COPY --from=builder /app/config.json ./
 
 EXPOSE 42069
 
