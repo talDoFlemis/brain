@@ -3,12 +3,14 @@ services:
     container_name: brain-frontend
     build:
       context: ./frontend/
+      args:
+        NEXT_PUBLIC_BACKEND_API_URL: "${NEXT_PUBLIC_BACKEND_API_URL:-http://localhost:42069}"
     ports:
       - "3000:3000"
-    environment: 
+    environment:
       NEXTAUTH_URL: "${NEXTAUTH_URL:-http://localhost:3000}"
       NEXTAUTH_SECRET: "${NEXTAUTH_SECRET:-saidmarinaamoreternoA8GPVSoaK/mUU=}"
-      BACKEND_API_URL: "${BACKEND_API_URL:-http://backend:42069}"
+      NEXT_PUBLIC_BACKEND_API_URL: "${NEXT_PUBLIC_BACKEND_API_URL:-http://backend:42069}"
     healthcheck:
       test: wget --no-verbose --tries=1 --spider http://localhost:3000 || exit 1
       interval: 60s
