@@ -5,6 +5,7 @@ import (
 
 	"github.com/taldoflemis/brain.test/config"
 	"github.com/taldoflemis/brain.test/internal/adapters/driven/postgres"
+	migrate "github.com/taldoflemis/brain.test/internal/adapters/driven/postgres/migrations"
 )
 
 func main() {
@@ -25,5 +26,5 @@ func main() {
 
 	connStr := postgres.GenerateConnectionString(pgCfg)
 	log.Print(connStr)
-	postgres.Migrate(connStr, "internal/adapters/driven/postgres/migrations/")
+	migrate.Migrate(connStr, "internal/adapters/driven/postgres/migrations/")
 }
