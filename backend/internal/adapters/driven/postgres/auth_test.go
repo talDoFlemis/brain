@@ -8,6 +8,7 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
+	"github.com/testcontainers/testcontainers-go/modules/postgres"
 
 	"github.com/taldoflemis/brain.test/internal/ports"
 	"github.com/taldoflemis/brain.test/test/helpers"
@@ -22,7 +23,7 @@ var (
 
 type LocalIDPPostgresStorerTestSuite struct {
 	suite.Suite
-	pgContainer *testshelpers.PostgresContainer
+	pgContainer *postgres.PostgresContainer
 	ctx         context.Context
 	repo        *LocalIDPPostgresStorer
 	pool        *pgxpool.Pool
@@ -30,17 +31,14 @@ type LocalIDPPostgresStorerTestSuite struct {
 
 func (suite *LocalIDPPostgresStorerTestSuite) SetupSuite() {
 	suite.ctx = context.Background()
-	pgContainer, err := testshelpers.CreatePostgresContainer(suite.ctx)
+	pgContainer, pool, err := testshelpers.CreatePostgresContainerAndMigrate(
+		suite.ctx,
+		"./migrations/",
+	)
 	if err != nil {
 		log.Fatal(err)
 	}
 	suite.pgContainer = pgContainer
-	pool, err := NewPool(pgContainer.ConnStr)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	Migrate(pgContainer.ConnStr, "./migrations/")
 
 	repository := NewLocalIDPPostgresStorer(pool)
 

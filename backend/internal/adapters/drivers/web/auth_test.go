@@ -14,6 +14,7 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
+	testcontainers "github.com/testcontainers/testcontainers-go/modules/postgres"
 
 	"github.com/taldoflemis/brain.test/internal/adapters/driven/auth"
 	"github.com/taldoflemis/brain.test/internal/adapters/driven/postgres"
@@ -39,7 +40,7 @@ var (
 
 type AuthHandlerTestSuite struct {
 	app         *fiber.App
-	pgContainer *testshelpers.PostgresContainer
+	pgContainer *testcontainers.PostgresContainer
 	suite.Suite
 	ctx  context.Context
 	pool *pgxpool.Pool
@@ -54,15 +55,13 @@ func (suite *AuthHandlerTestSuite) SetupSuite() {
 	suite.ctx = context.Background()
 
 	logger := testshelpers.NewDummyLogger(log.Writer())
-	pgContainer, err := testshelpers.CreatePostgresContainer(suite.ctx)
+	pgContainer, pool, err := testshelpers.CreatePostgresContainerAndMigrate(
+		suite.ctx,
+		"../../driven/postgres/migrations/",
+	)
 	if err != nil {
 		log.Fatal("tubias", err)
 	}
-	pool, err := postgres.NewPool(pgContainer.ConnStr)
-	if err != nil {
-		log.Fatal(err)
-	}
-	postgres.Migrate(pgContainer.ConnStr, "../../driven/postgres/migrations/")
 
 	repository := postgres.NewLocalIDPPostgresStorer(pool)
 	cfg := auth.NewLocalIdpConfig(
