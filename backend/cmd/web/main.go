@@ -62,6 +62,7 @@ func main() {
 		log.Fatal(err)
 	}
 
+	gameStorer := postgres.NewPostgresGameStorer(pool)
 	localIDPStorer := postgres.NewLocalIDPPostgresStorer(pool)
 
 	localIDP := auth.NewLocalIdp(*localIDPCfg, zapLoggerAdapter, localIDPStorer)
@@ -69,6 +70,7 @@ func main() {
 	// Init Services
 	validationService := services.NewValidationService()
 	authService := services.NewAuthenticationService(zapLoggerAdapter, localIDP, validationService)
+	gameService := services.NewGameService(zapLoggerAdapter, validationService, gameStorer)
 
 	// Init Drivers
 	handlers := make([]web.Handler, 0)
@@ -76,6 +78,9 @@ func main() {
 	jwtMiddleware := web.NewJWTMiddleware(localIDP)
 	authHandler := web.NewAuthHandler(jwtMiddleware, authService, validationService)
 	handlers = append(handlers, authHandler)
+
+	gameHandler := web.NewGameHandler(jwtMiddleware, validationService, gameService)
+	handlers = append(handlers, gameHandler)
 
 	router := web.NewRouter(*fiberCfg, logger, handlers)
 	err = router.Serve()
