@@ -26,6 +26,10 @@ func (validationerror *ValidationError) GetMessages() []ErrorMessage {
 	return validationerror.errors
 }
 
+func (v *ValidationError) AddNewMessage(e ErrorMessage) {
+	v.errors = append(v.errors, e)
+}
+
 func NewValidationService() *ValidationService {
 	return &ValidationService{
 		validate: validator.New(validator.WithRequiredStructEnabled()),
