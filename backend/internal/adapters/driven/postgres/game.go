@@ -36,7 +36,6 @@ func (p *PostgresGameStorer) StoreGame(
 	if err != nil {
 		return err
 	}
-	defer tx.Rollback(ctx)
 
 	args := pgx.NamedArgs{
 		"id":          game.Id,
@@ -60,7 +59,10 @@ func (p *PostgresGameStorer) StoreGame(
 	}
 
 	err = tx.Commit(ctx)
-	return err
+	if err != nil {
+		return tx.Rollback(ctx)
+	}
+	return nil
 }
 
 func (p *PostgresGameStorer) UpdateGameInfo(ctx context.Context) error {
