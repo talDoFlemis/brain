@@ -1,6 +1,7 @@
 package services
 
 import (
+	"errors"
 	"fmt"
 
 	"github.com/go-playground/validator/v10"
@@ -41,16 +42,21 @@ func (v ValidationService) Validate(i interface{}) error {
 
 	errs := v.validate.Struct(i)
 	if errs != nil {
-		for _, err := range errs.(validator.ValidationErrors) {
-			var elem ErrorMessage
+		var ve validator.ValidationErrors
+		if errors.As(errs, &ve) {
+			for _, err := range errs.(validator.ValidationErrors) {
+				var elem ErrorMessage
 
-			elem.Message = fmt.Sprintf(
-				"[%s]: '%v' | Needs to implement '%s'",
-				err.Field(),
-				err.Value(),
-				err.Tag(),
-			)
-			validationErrors = append(validationErrors, elem)
+				elem.Message = fmt.Sprintf(
+					"[%s]: '%v' | Needs to implement '%s'",
+					err.Field(),
+					err.Value(),
+					err.Tag(),
+				)
+				validationErrors = append(validationErrors, elem)
+			}
+		} else {
+			return errs
 		}
 
 		return &ValidationError{errors: validationErrors}
