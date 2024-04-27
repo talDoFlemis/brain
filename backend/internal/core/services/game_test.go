@@ -18,7 +18,7 @@ import (
 )
 
 var (
-	testGameID          = uuid.New()
+	testGameID = uuid.New()
 )
 
 type GameServiceTestSuite struct {
