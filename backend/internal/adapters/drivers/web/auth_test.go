@@ -1,4 +1,4 @@
-package web
+package web_test
 
 import (
 	"context"
@@ -16,8 +16,7 @@ import (
 	"github.com/stretchr/testify/suite"
 	testcontainers "github.com/testcontainers/testcontainers-go/modules/postgres"
 
-	"github.com/taldoflemis/brain.test/internal/adapters/driven/auth"
-	"github.com/taldoflemis/brain.test/internal/adapters/driven/postgres"
+	"github.com/taldoflemis/brain.test/internal/adapters/drivers/web"
 	"github.com/taldoflemis/brain.test/internal/core/services"
 	"github.com/taldoflemis/brain.test/internal/ports"
 	testshelpers "github.com/taldoflemis/brain.test/test/helpers"
@@ -50,7 +49,7 @@ type AuthHandlerTestSuite struct {
 
 func (suite *AuthHandlerTestSuite) SetupSuite() {
 	app := fiber.New(fiber.Config{
-		ErrorHandler: ErrorHandlerMiddleware,
+		ErrorHandler: web.ErrorHandlerMiddleware,
 	})
 	suite.ctx = context.Background()
 
@@ -63,21 +62,7 @@ func (suite *AuthHandlerTestSuite) SetupSuite() {
 		log.Fatal("tubias", err)
 	}
 
-	repository := postgres.NewLocalIDPPostgresStorer(pool)
-	cfg := auth.NewLocalIdpConfig(
-		seed,
-		"issuer",
-		"audience",
-		accessMaxAgeInMin,
-		refreshMaxAgeInHours,
-	)
-	authManager := auth.NewLocalIdp(
-		*cfg,
-		logger,
-		repository,
-	)
-
-	jwtMiddleware := NewJWTMiddleware(authManager)
+	jwtMiddleware, authManager := newJWTMiddleware(logger, pool)
 	validationService := services.NewValidationService()
 	authService := services.NewAuthenticationService(
 		logger,
@@ -85,7 +70,7 @@ func (suite *AuthHandlerTestSuite) SetupSuite() {
 		validationService,
 	)
 
-	authHandler := NewAuthHandler(jwtMiddleware, authService, validationService)
+	authHandler := web.NewAuthHandler(jwtMiddleware, authService, validationService)
 
 	authHandler.RegisterRoutes(app)
 
