@@ -1,6 +1,6 @@
 module github.com/taldoflemis/brain.test
 
-go 1.22.1
+go 1.22.2
 
 require (
 	github.com/gavv/httpexpect/v2 v2.16.0
@@ -125,7 +125,7 @@ require (
 	go.uber.org/multierr v1.10.0 // indirect
 	golang.org/x/exp v0.0.0-20230510235704-dd950f8aeaea // indirect
 	golang.org/x/mod v0.16.0 // indirect
-	golang.org/x/net v0.21.0 // indirect
+	golang.org/x/net v0.23.0 // indirect
 	golang.org/x/sync v0.5.0 // indirect
 	golang.org/x/sys v0.18.0 // indirect
 	golang.org/x/text v0.14.0 // indirect
