@@ -34,6 +34,22 @@
         "type": "github"
       }
     },
+    "nixpkgs-go-v1_22_2": {
+      "locked": {
+        "lastModified": 1713562564,
+        "narHash": "sha256-NQpYhgoy0M89g9whRixSwsHb8RFIbwlxeYiVSDwSXJg=",
+        "owner": "nixos",
+        "repo": "nixpkgs",
+        "rev": "92d295f588631b0db2da509f381b4fb1e74173c5",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nixos",
+        "repo": "nixpkgs",
+        "rev": "92d295f588631b0db2da509f381b4fb1e74173c5",
+        "type": "github"
+      }
+    },
     "nixpkgs-pw-v1_40": {
       "locked": {
         "lastModified": 1711106783,
@@ -54,6 +70,7 @@
       "inputs": {
         "flake-utils": "flake-utils",
         "nixpkgs": "nixpkgs",
+        "nixpkgs-go-v1_22_2": "nixpkgs-go-v1_22_2",
         "nixpkgs-pw-v1_40": "nixpkgs-pw-v1_40"
       }
     },
