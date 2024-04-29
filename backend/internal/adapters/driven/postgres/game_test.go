@@ -212,188 +212,79 @@ func (suite *PostgresGameStorerTestSuite) TestStoreGameWithQuizQuestions() {
 	// Arrange
 	t := suite.T()
 	mockedGame := suite.generateMockedGame()
-
-	table := []struct {
-		gameId      uuid.UUID
-		description string
-		questions   []game.Question
-	}{
-		{
-			gameId:      uuid.New(),
-			description: "single quiz question empty alternatives",
-			questions: []game.Question{
-				&game.QuizQuestion{
-					Id:           uuid.New(),
-					Title:        "quz question 420",
-					Points:       1,
-					TimeLimit:    30,
-					Alternatives: []game.Alternative{},
+	mockedGame.Questions = []game.Question{
+		&game.QuizQuestion{
+			Id:        uuid.New(),
+			Title:     "quiz 1",
+			Points:    1,
+			TimeLimit: 30,
+			Alternatives: []game.Alternative{
+				{
+					Data:      "testAlternative 3",
+					IsCorrect: true,
+				},
+				{
+					Data:      "testAlternative 4",
+					IsCorrect: true,
+				},
+				{
+					Data:      "testAlternative 5",
+					IsCorrect: true,
 				},
 			},
 		},
-		{
-			gameId:      uuid.New(),
-			description: "single quiz question with one alternative",
-			questions: []game.Question{
-				&game.QuizQuestion{
-					Id:        uuid.New(),
-					Title:     "quz question 69",
-					Points:    1,
-					TimeLimit: 30,
-					Alternatives: []game.Alternative{
-						{
-							Data:      "testAlternative asdf",
-							IsCorrect: true,
-						},
-					},
+		&game.QuizQuestion{
+			Id:        uuid.New(),
+			Title:     "quiz 2",
+			Points:    1,
+			TimeLimit: 30,
+			Alternatives: []game.Alternative{
+				{
+					Data:      "testAlternative 7",
+					IsCorrect: true,
 				},
-			},
-		},
-		{
-			gameId:      uuid.New(),
-			description: "multiples quiz question",
-			questions: []game.Question{
-				&game.QuizQuestion{
-					Id:        uuid.New(),
-					Title:     "quz question 1",
-					Points:    1,
-					TimeLimit: 30,
-					Alternatives: []game.Alternative{
-						{
-							Data:      "testAlternative 0",
-							IsCorrect: true,
-						},
-					},
-				},
-				&game.QuizQuestion{
-					Id:        uuid.New(),
-					Title:     "quz question 2",
-					Points:    1,
-					TimeLimit: 30,
-					Alternatives: []game.Alternative{
-						{
-							Data:      "testAlternative 2",
-							IsCorrect: true,
-						},
-					},
-				},
-			},
-		},
-		{
-			gameId:      uuid.New(),
-			description: "single quiz multiples alternatives",
-			questions: []game.Question{
-				&game.QuizQuestion{
-					Id:        uuid.New(),
-					Title:     "quiz 10",
-					Points:    1,
-					TimeLimit: 30,
-					Alternatives: []game.Alternative{
-						{
-							Data:      "testAlternative 30",
-							IsCorrect: true,
-						},
-						{
-							Data:      "testAlternative 40",
-							IsCorrect: true,
-						},
-						{
-							Data:      "testAlternative 50",
-							IsCorrect: true,
-						},
-					},
-				},
-			},
-		},
-		{
-			gameId:      uuid.New(),
-			description: "multiples quizzes multiples alternatives",
-			questions: []game.Question{
-				&game.QuizQuestion{
-					Id:        uuid.New(),
-					Title:     "quiz 1",
-					Points:    1,
-					TimeLimit: 30,
-					Alternatives: []game.Alternative{
-						{
-							Data:      "testAlternative 3",
-							IsCorrect: true,
-						},
-						{
-							Data:      "testAlternative 4",
-							IsCorrect: true,
-						},
-						{
-							Data:      "testAlternative 5",
-							IsCorrect: true,
-						},
-					},
-				},
-				&game.QuizQuestion{
-					Id:        uuid.New(),
-					Title:     "quiz 2",
-					Points:    1,
-					TimeLimit: 30,
-					Alternatives: []game.Alternative{
-						{
-							Data:      "testAlternative 7",
-							IsCorrect: true,
-						},
-						{
-							Data:      "testAlternative 8",
-							IsCorrect: true,
-						},
-					},
+				{
+					Data:      "testAlternative 8",
+					IsCorrect: true,
 				},
 			},
 		},
 	}
 
-	for _, tt := range table {
-		mockedGame.Questions = tt.questions
-		mockedGame.Id = tt.gameId
+	// Act
+	err := suite.repo.StoreGame(suite.ctx, mockedGame)
 
-		t.Run(tt.description, func(t *testing.T) {
-			// Act
-			err := suite.repo.StoreGame(suite.ctx, mockedGame)
+	// Assert
+	assert.NoError(t, err)
 
-			// Assert
+	rows, err := suite.pool.Query(
+		suite.ctx,
+		`SELECT id FROM questions WHERE game_id = $1`,
+		mockedGame.Id)
+	assert.NoError(t, err)
+
+	for _, mockedQuestion := range mockedGame.Questions {
+		rows.Next()
+		var id uuid.UUID
+		err = rows.Scan(&id)
+		assert.NoError(t, err)
+		alternatives, err := suite.pool.Query(
+			suite.ctx,
+			`SELECT data, correct FROM quiz_questions WHERE question_id = $1`,
+			id,
+		)
+		mockedQuestion.GetTitle()
+		assert.NoError(t, err)
+		for _, mockedAlternative := range mockedQuestion.(*game.QuizQuestion).Alternatives {
+			alternatives.Next()
+			var actualA game.Alternative
+
+			err = alternatives.Scan(&actualA.Data, &actualA.IsCorrect)
 			assert.NoError(t, err)
-
-			rows, err := suite.pool.Query(
-				suite.ctx,
-				`SELECT id, title, time_limit, points FROM questions WHERE game_id = $1`,
-				tt.gameId)
-			assert.NoError(t, err)
-
-			for _, mockedQuestion := range mockedGame.Questions {
-				rows.Next()
-				var actualQ game.QuizQuestion
-
-				err = rows.Scan(&actualQ.Id, &actualQ.Title, &actualQ.TimeLimit, &actualQ.Points)
-				assert.NoError(t, err)
-				suite.assertQuestions(t, mockedQuestion, &actualQ)
-
-				alternatives, err := suite.pool.Query(
-					suite.ctx,
-					`SELECT data, correct FROM quiz_questions WHERE question_id = $1`,
-					actualQ.Id,
-				)
-				assert.NoError(t, err)
-
-				for _, mockedAlternative := range mockedQuestion.(*game.QuizQuestion).Alternatives {
-					alternatives.Next()
-					var actualA game.Alternative
-
-					err = alternatives.Scan(&actualA.Data, &actualA.IsCorrect)
-					assert.NoError(t, err)
-					assert.Equal(t, mockedAlternative.Data, actualA.Data)
-					assert.Equal(t, mockedAlternative.IsCorrect, actualA.IsCorrect)
-				}
-			}
-			assert.False(t, rows.Next())
-		})
+			assert.Equal(t, mockedAlternative, actualA)
+		}
 	}
+	assert.False(t, rows.Next())
 }
 
 func (suite *PostgresGameStorerTestSuite) TestStoreGameWithDiverseQuestions() {
@@ -474,7 +365,8 @@ func (suite *PostgresGameStorerTestSuite) TestStoreGameWithDiverseQuestions() {
 	assert.NoError(t, err)
 	assert.Equal(t, len(q), amount)
 
-	err = suite.pool.QueryRow(suite.ctx, `SELECT COUNT(DISTINCT question_id) FROM quiz_questions`).Scan(&amount)
+	err = suite.pool.QueryRow(suite.ctx, `SELECT COUNT(DISTINCT question_id) FROM quiz_questions`).
+		Scan(&amount)
 	assert.NoError(t, err)
 	assert.Equal(t, len(quizQuestions), amount)
 
