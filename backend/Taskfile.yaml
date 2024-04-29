@@ -29,17 +29,17 @@ tasks:
   test-light:
     desc: "Run lighter tests"
     cmds:
-      - gotestsum -f pkgname -- -short ./...
+      - gotestsum -f testname -- -short ./...
 
   test-all:
     desc: "Run entire tests"
     cmds:
-      - gotestsum -f pkgname
+      - gotestsum -f testname
 
   watch-tests:
     desc: "Watch tests"
     cmds:
-      - gotestsum --watch -f pkgname
+      - gotestsum --watch -f testname
 
   flag-heavy-tests:
     desc: "Flag a Heavy test with short so that we can skip if necessary"
