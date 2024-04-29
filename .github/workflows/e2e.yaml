@@ -3,7 +3,7 @@ on:
   push:
     branches: [main]
   pull_request:
-    branches: [main, dev]
+    branches: [main]
 
 env:
   NEXTAUTH_URL: "http://localhost:3000"
@@ -46,7 +46,6 @@ jobs:
 
       - name: Run backend
         run: task backend:run-web -- &
-
 
       - name: Get installed Playwright version
         id: playwright-version

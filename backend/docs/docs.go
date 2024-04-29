@@ -252,9 +252,98 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/game/": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Game"
+                ],
+                "summary": "Create a Game",
+                "parameters": [
+                    {
+                        "description": "Create Game Request",
+                        "name": "req",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/web.CreateGameRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created"
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "schema": {
+                            "$ref": "#/definitions/web.ValidationErrorResponse"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
+        "web.CreateGameRequest": {
+            "description": "Request to create a Game",
+            "type": "object",
+            "required": [
+                "questions",
+                "title"
+            ],
+            "properties": {
+                "description": {
+                    "description": "the description of a game",
+                    "type": "string"
+                },
+                "questions": {
+                    "description": "questions of the game",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/web.CreateQuestionRequest"
+                    }
+                },
+                "title": {
+                    "description": "the title of a game",
+                    "type": "string"
+                }
+            }
+        },
+        "web.CreateQuestionRequest": {
+            "description": "a way to create questions dynamically",
+            "type": "object",
+            "required": [
+                "data",
+                "kind"
+            ],
+            "properties": {
+                "data": {
+                    "description": "data",
+                    "type": "object",
+                    "additionalProperties": {}
+                },
+                "kind": {
+                    "description": "kind",
+                    "type": "string"
+                }
+            }
+        },
         "web.LoginRequest": {
             "description": "Request of Login",
             "type": "object",
