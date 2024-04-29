@@ -5,6 +5,8 @@ import (
 	"fmt"
 
 	"github.com/go-playground/validator/v10"
+
+	game "github.com/taldoflemis/brain.test/internal/core/domain/game_aggregate"
 )
 
 type ValidationService struct {
@@ -32,8 +34,13 @@ func (v *ValidationError) AddNewMessage(e ErrorMessage) {
 }
 
 func NewValidationService() *ValidationService {
+	validate := validator.New(validator.WithRequiredStructEnabled())
+	err := validate.RegisterValidation("atleastonecorrect", game.ValidateAtLeastOneCorrect)
+	if err != nil {
+		panic(err)
+	}
 	return &ValidationService{
-		validate: validator.New(validator.WithRequiredStructEnabled()),
+		validate: validate,
 	}
 }
 

@@ -438,6 +438,37 @@ func (s *GameServiceTestSuite) TestCreateNewInvalidGame() {
 				},
 			},
 		},
+		{
+			testDescription: "game with quiz question with no correct alternatives",
+			title:           "title 21",
+			desc:            "testDescription 21",
+			ownerID:         userID,
+			questions: []game.Question{
+				&game.QuizQuestion{
+					Title:     "title 21",
+					Points:    1,
+					TimeLimit: 30,
+					Alternatives: []game.Alternative{
+						{
+							Data:      "alternativeFirst 21",
+							IsCorrect: false,
+						},
+						{
+							Data:      "alternativeSecond 21",
+							IsCorrect: false,
+						},
+						{
+							Data:      "alternativeThird 21",
+							IsCorrect: false,
+						},
+						{
+							Data:      "alternativeFourth 21",
+							IsCorrect: false,
+						},
+					},
+				},
+			},
+		},
 	}
 
 	validatorError := &services.ValidationError{}
