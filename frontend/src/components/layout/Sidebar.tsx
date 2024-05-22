@@ -40,7 +40,7 @@ function SidebarLink({ href, Icon, text, active }: SidebarLinkProps) {
 
 function Sidebar() {
   return (
-    <aside className="flex flex-col gap-2 h-full w-96 bg-background p-6">
+    <aside className="flex flex-col h-full gap-2 w-96 p-6">
       <div className="flex items-center gap-2 w-full bg-foreground p-6 rounded-lg">
         <Image
           className="self-center"
