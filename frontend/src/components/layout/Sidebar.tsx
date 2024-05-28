@@ -2,9 +2,10 @@ import Image from "next/image";
 import Link from "next/link";
 import { IoListOutline } from "react-icons/io5";
 import { IoMdCheckmarkCircleOutline } from "react-icons/io";
-import { FaPlus, FaRobot } from "react-icons/fa6";
+import { FaPlus } from "react-icons/fa6";
 import { FaPlay } from "react-icons/fa";
 import { ReactNode } from "react";
+import { LuBrainCircuit } from "react-icons/lu";
 import { IconType } from "react-icons/lib";
 import { cn } from "@/lib/utils";
 
@@ -27,7 +28,7 @@ function SidebarLink({ href, Icon, text, active }: SidebarLinkProps) {
   return (
     <Link
       className={cn(
-        "flex items-center gap-2 px-2 py-2 text-lg text-secondary-foreground bg-foreground rounded-md",
+        "flex items-center gap-2 px-2 py-2 text-lg text-secondary-foreground bg-foreground rounded-md hover:bg-secondary transition-colors duration-300",
         active ? "bg-secondary" : "",
       )}
       href={href}
@@ -72,7 +73,7 @@ function Sidebar() {
         <SidebarLink
           href="#"
           active={false}
-          Icon={FaRobot}
+          Icon={LuBrainCircuit}
           text={
             <>
               Quiz gerado por <span className="text-accent">AI</span>
