@@ -74,21 +74,75 @@ func (p *PostgresGameStorer) UpdateGameQuestions(ctx context.Context) error {
 }
 
 func (p *PostgresGameStorer) DeleteGame(ctx context.Context, id uuid.UUID) error {
-	panic("not implemented") // TODO: Implement
+	args := pgx.NamedArgs{
+		"gameId": id,
+	}
+
+	query := "DELETE FROM games WHERE id = @gameId"
+
+	_, err := p.pool.Exec(ctx, query, args)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func (p *PostgresGameStorer) FindGameById(
 	ctx context.Context,
 	id uuid.UUID,
 ) (*game.Game, error) {
-	panic("not implemented") // TODO: Implement
+	args := pgx.NamedArgs{
+		"gameId": id,
+	}
+
+	query := `SELECT id, owner_id, title, description FROM games WHERE id = @gameId;`
+
+	row := p.pool.QueryRow(ctx, query, args)
+
+	game := game.Game{Questions: nil}
+
+	err := row.Scan(&game.Id, &game.Title, &game.Description, &game.OwnerId)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &game, nil
 }
 
 func (p *PostgresGameStorer) FindAllGamesByUserId(
 	ctx context.Context,
 	userId string,
 ) ([]*game.Game, error) {
-	panic("not implemented") // TODO: Implement
+	args := pgx.NamedArgs{
+		"userId": userId,
+	}
+
+	query := `SELECT id, owner_id, title, description FROM games WHERE owner_id = @userId;`
+
+	rows, err := p.pool.Query(ctx, query, args)
+
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	games := []*game.Game{}
+
+	for rows.Next() {
+		game := game.Game{Questions: nil}
+
+		err := rows.Scan(&game.Id, &game.Title, &game.Description, &game.OwnerId)
+
+		if err != nil {
+			return nil, err
+		}
+		games = append(games, &game)
+	}
+
+	return games, nil
 }
 
 func (p *PostgresGameStorer) storeQuestion(
