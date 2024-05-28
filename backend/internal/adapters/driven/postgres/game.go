@@ -2,6 +2,7 @@ package postgres
 
 import (
 	"context"
+	"errors"
 
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
@@ -106,6 +107,10 @@ func (p *PostgresGameStorer) FindGameById(
 	err := row.Scan(&game.Id, &game.Title, &game.Description, &game.OwnerId)
 
 	if err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			return nil, ports.ErrGameNotFound
+		}
+
 		return nil, err
 	}
 

@@ -11,6 +11,7 @@ import (
 
 var (
 	ErrUnknownQuestionKind = errors.New("Unknown question type")
+	ErrGameNotFound        = errors.New("Game not found")
 )
 
 type GameStorer interface {
