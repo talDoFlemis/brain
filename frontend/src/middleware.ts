@@ -1,4 +1,4 @@
 export { default } from "next-auth/middleware";
 
 // Define the routes you want to protect here
-export const config = { matcher: ["/dashboard/:path"] };
+export const config = { matcher: ["/banana/:path"] };
