@@ -8,7 +8,7 @@ export const metadata: Metadata = {
 
 export default function SignUp() {
   return (
-    <main className="dark grid grid-cols-4 min-h-screen w-full bg-background">
+    <main className="dark grid grid-cols-4 min-h-screen w-full bg-background font-inter">
       <RegisterSection />
       <section className="hidden lg:block col-span-2 bg-cover bg-[url('/brain-surface.svg')]"></section>
     </main>
