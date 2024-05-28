@@ -41,7 +41,7 @@ function SidebarLink({ href, Icon, text, active }: SidebarLinkProps) {
 function Sidebar() {
   return (
     <aside className="flex flex-col h-full gap-2 w-96 p-6">
-      <div className="flex items-center gap-2 w-full bg-foreground p-6 rounded-lg">
+      <div className="flex items-center gap-2 w-full bg-foreground p-6 rounded-lg justify-center">
         <Image
           className="self-center"
           src="/brain-logo.svg"
@@ -50,7 +50,7 @@ function Sidebar() {
           height={50}
           priority
         />
-        <span className="text-3xl uppercase text-white">Brain</span>
+        <span className="text-3xl uppercase text-white font-jua">Brain</span>
       </div>
       <LinkContainer>
         <SidebarLink

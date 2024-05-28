@@ -21,6 +21,7 @@ const config = {
       fontFamily: {
         inter: ["var(--font-inter)"],
         montserrat: ["var(--font-montserrat)"],
+        jua: ["var(--font-jua)"],
       },
       colors: {
         border: "hsl(var(--border))",
