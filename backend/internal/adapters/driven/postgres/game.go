@@ -98,7 +98,7 @@ func (p *PostgresGameStorer) FindGameById(
 		"gameId": id,
 	}
 
-	query := `SELECT id, owner_id, title, description FROM games WHERE id = @gameId;`
+	query := `SELECT id, title, description, owner_id FROM games WHERE id = @gameId;`
 
 	row := p.pool.QueryRow(ctx, query, args)
 
@@ -125,7 +125,7 @@ func (p *PostgresGameStorer) FindAllGamesByUserId(
 		"userId": userId,
 	}
 
-	query := `SELECT id, owner_id, title, description FROM games WHERE owner_id = @userId;`
+	query := `SELECT id, title, description, owner_id FROM games WHERE owner_id = @userId;`
 
 	rows, err := p.pool.Query(ctx, query, args)
 
