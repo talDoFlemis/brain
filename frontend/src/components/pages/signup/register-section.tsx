@@ -46,17 +46,17 @@ function RegisterSection() {
         priority
       />
       <div className="self-center flex flex-col items-center gap-4">
-        <h2 className="text-3xl text-foreground font-semibold">
+        <h2 className="text-3xl text-card-foreground font-semibold">
           Registrar uma conta
         </h2>
-        <h3 className="text-sm text-foreground/50 font-semibold">
+        <h3 className="text-sm text-card-foreground/50 font-semibold">
           Digite suas credenciais
         </h3>
       </div>
       <RegisterForm submitForm={submitForm} />
-      <p className="text-sm text-foreground">
+      <p className="text-sm text-card-foreground">
         Ja possui uma conta?
-        <Button variant="link" size="sm" asChild>
+        <Button className="text-accent" variant="link" size="sm" asChild>
           <Link href="/sign-in">Logar</Link>
         </Button>
       </p>
