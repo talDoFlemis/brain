@@ -146,16 +146,16 @@ func (h *gameHandler) RegisterRoutes(router fiber.Router) {
 	gameApi.Get("/:gameId", h.GetGamesById)
 }
 
-//	 GetGameByUserId godoc
+//	GetGameByUserId godoc
 //
-//	@Summary	Get games by user id
-//	@Tags		Game
-//	@Accept		json
-//	@Success	200
-//	@Failure	400		{string}	string
-//	@Failure	401		{string}	string
-//	@Failure	422		{object}	ValidationErrorResponse
-//	@Router		/game/	[get]
+// @Summary	Get games by user id
+// @Tags		Game
+// @Accept		json
+// @Success	200
+// @Failure	400		{string}	string
+// @Failure	401		{string}	string
+// @Failure	422		{object}	ValidationErrorResponse
+// @Router		/game/	[get]
 func (h *gameHandler) GetGamesByUserId(c *fiber.Ctx) error {
 	userId := extractTokenFromContext(c)
 
@@ -170,15 +170,15 @@ func (h *gameHandler) GetGamesByUserId(c *fiber.Ctx) error {
 	})
 }
 
-//	 GetGameById godoc
+//	GetGameById godoc
 //
-//	@Summary	Get games by id
-//	@Tags		Game
-//	@Accept		json
-//	@Success	200
-//	@Failure	401			{string}	string
-//	@Failure	404			{string}	string
-//	@Router		/game/:id	[get]
+// @Summary	Get games by id
+// @Tags		Game
+// @Accept		json
+// @Success	200
+// @Failure	401			{string}	string
+// @Failure	404			{string}	string
+// @Router		/game/:id	[get]
 func (h *gameHandler) GetGamesById(c *fiber.Ctx) error {
 	gameId, err := uuid.Parse(c.Params("gameId"))
 
