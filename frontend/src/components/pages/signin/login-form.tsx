@@ -53,12 +53,15 @@ function LoginForm({ submitForm }: LoginFormProps) {
           name="username"
           render={({ field }) => (
             <FormItem>
-              <FormLabel htmlFor="username-input" className="text-foreground">
+              <FormLabel
+                htmlFor="username-input"
+                className="text-card-foreground"
+              >
                 Username
               </FormLabel>
               <FormControl>
                 <Input
-                  className="text-foreground"
+                  className="text-card-foreground"
                   type="text"
                   id="username-input"
                   placeholder="marcelo jr"
@@ -76,12 +79,15 @@ function LoginForm({ submitForm }: LoginFormProps) {
           name="password"
           render={({ field }) => (
             <FormItem>
-              <FormLabel htmlFor="password-input" className="text-foreground">
+              <FormLabel
+                htmlFor="password-input"
+                className="text-card-foreground"
+              >
                 Senha
               </FormLabel>
               <FormControl>
                 <Input
-                  className="text-foreground"
+                  className="text-card-foreground"
                   type="password"
                   id="password-input"
                   placeholder="*****"
@@ -95,11 +101,17 @@ function LoginForm({ submitForm }: LoginFormProps) {
           )}
         />
 
-        <Button className="text-xs px-0" variant="link" size="sm" asChild>
+        <Button
+          className="text-accent text-xs px-0"
+          variant="link"
+          size="sm"
+          asChild
+        >
           <Link href="/forgot-password">Esqueci minha senha</Link>
         </Button>
         <Button
           disabled={form.formState.isSubmitting}
+          className="bg-secondary hover:bg-secondary/90"
           size="full"
           type="submit"
         >

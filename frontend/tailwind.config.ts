@@ -18,6 +18,11 @@ const config = {
       },
     },
     extend: {
+      fontFamily: {
+        inter: ["var(--font-inter)"],
+        montserrat: ["var(--font-montserrat)"],
+        jua: ["var(--font-jua)"],
+      },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",

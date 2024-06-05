@@ -64,12 +64,15 @@ function RegisterForm({ submitForm }: RegisterFormProps) {
           name="username"
           render={({ field }) => (
             <FormItem>
-              <FormLabel htmlFor="username-input" className="text-foreground">
+              <FormLabel
+                htmlFor="username-input"
+                className="text-card-foreground"
+              >
                 Username
               </FormLabel>
               <FormControl>
                 <Input
-                  className="text-foreground"
+                  className="text-card-foreground"
                   type="text"
                   id="username-input"
                   aria-invalid={!!form.formState.errors.username}
@@ -87,12 +90,12 @@ function RegisterForm({ submitForm }: RegisterFormProps) {
           name="email"
           render={({ field }) => (
             <FormItem>
-              <FormLabel htmlFor="email-input" className="text-foreground">
+              <FormLabel htmlFor="email-input" className="text-card-foreground">
                 Email
               </FormLabel>
               <FormControl>
                 <Input
-                  className="text-foreground"
+                  className="text-card-foreground"
                   type="email"
                   id="email-input"
                   aria-invalid={!!form.formState.errors.email}
@@ -110,12 +113,15 @@ function RegisterForm({ submitForm }: RegisterFormProps) {
           name="password"
           render={({ field }) => (
             <FormItem>
-              <FormLabel htmlFor="password-input" className="text-foreground">
+              <FormLabel
+                htmlFor="password-input"
+                className="text-card-foreground"
+              >
                 Senha
               </FormLabel>
               <FormControl>
                 <Input
-                  className="text-foreground"
+                  className="text-card-foreground"
                   type="password"
                   id="password-input"
                   aria-invalid={!!form.formState.errors.password}
@@ -136,14 +142,14 @@ function RegisterForm({ submitForm }: RegisterFormProps) {
             <FormItem className="pb-3">
               <FormLabel
                 htmlFor="password-confirm-input"
-                className="text-foreground"
+                className="text-card-foreground"
               >
                 Confirmar senha
               </FormLabel>
               <FormControl>
                 <Input
                   id="password-confirm-input"
-                  className="text-foreground"
+                  className="text-card-foreground"
                   type="password"
                   placeholder="*****"
                   aria-invalid={!!form.formState.errors.confirm}
@@ -156,6 +162,7 @@ function RegisterForm({ submitForm }: RegisterFormProps) {
           )}
         />
         <Button
+          className="bg-secondary hover:bg-secondary/90"
           disabled={form.formState.isSubmitting}
           size="full"
           type="submit"

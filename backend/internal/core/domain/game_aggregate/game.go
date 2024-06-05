@@ -5,9 +5,9 @@ import (
 )
 
 type Game struct {
-	Id          uuid.UUID  `validate:"required,uuid4"`
-	Title       string     `validate:"required,gte=1,lte=120"`
-	Description string     `validate:"min=1,max=200"`
-	OwnerId     string     `validate:"required,min=1"`
-	Questions   []Question `validate:"required,min=1,dive"`
+	Id          uuid.UUID  `json:"id"          validate:"required,uuid4"`
+	Title       string     `json:"title"       validate:"required,gte=1,lte=120"`
+	Description string     `json:"description" validate:"min=1,max=200"`
+	OwnerId     string     `json:"owner_id"    validate:"required,min=1"`
+	Questions   []Question `json:"questions"   validate:"required,min=1,dive"`
 }

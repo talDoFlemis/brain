@@ -5,9 +5,11 @@ import (
 	"errors"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/google/uuid"
 
 	game "github.com/taldoflemis/brain.test/internal/core/domain/game_aggregate"
 	"github.com/taldoflemis/brain.test/internal/core/services"
+	"github.com/taldoflemis/brain.test/internal/ports"
 )
 
 type QuestionKind string
@@ -140,6 +142,62 @@ func (h *gameHandler) RegisterRoutes(router fiber.Router) {
 
 	gameApi.Use(h.jwtMiddleware)
 	gameApi.Post("/", h.CreateGame)
+	gameApi.Get("/", h.GetGamesByUserId)
+	gameApi.Get("/:gameId", h.GetGamesById)
+}
+
+//	GetGameByUserId godoc
+//
+// @Summary	Get games by user id
+// @Tags		Game
+// @Accept		json
+// @Success	200
+// @Failure	400		{string}	string
+// @Failure	401		{string}	string
+// @Failure	422		{object}	ValidationErrorResponse
+// @Router		/game/	[get]
+func (h *gameHandler) GetGamesByUserId(c *fiber.Ctx) error {
+	userId := extractTokenFromContext(c)
+
+	games, err := h.gameService.GetGamesByUserId(c.Context(), userId)
+
+	if err != nil {
+		return err
+	}
+
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		"games": games,
+	})
+}
+
+//	GetGameById godoc
+//
+// @Summary	Get games by id
+// @Tags		Game
+// @Accept		json
+// @Success	200
+// @Failure	401			{string}	string
+// @Failure	404			{string}	string
+// @Router		/game/:id	[get]
+func (h *gameHandler) GetGamesById(c *fiber.Ctx) error {
+	gameId, err := uuid.Parse(c.Params("gameId"))
+
+	if err != nil {
+		return err
+	}
+
+	game, err := h.gameService.GetGameById(c.Context(), gameId)
+
+	if err != nil {
+		if errors.Is(err, ports.ErrGameNotFound) {
+			return c.Status(fiber.StatusNotFound).SendString(err.Error())
+		}
+		return err
+	}
+
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		"game": game,
+	})
 }
 
 // CreateGame godoc

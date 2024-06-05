@@ -49,3 +49,17 @@ func (s *GameService) CreateNewGame(
 
 	return nil
 }
+
+func (s *GameService) GetGamesByUserId(
+	ctx context.Context,
+	userId string,
+) ([]*game.Game, error) {
+	return s.gameStorer.FindAllGamesByUserId(ctx, userId)
+}
+
+func (s *GameService) GetGameById(
+	ctx context.Context,
+	gameId uuid.UUID,
+) (*game.Game, error) {
+	return s.gameStorer.FindGameById(ctx, gameId)
+}
