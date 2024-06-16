@@ -37,7 +37,14 @@ export default async function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={clsx(inter.variable, montserrat.variable, jua.variable)}>
+      <body
+        className={clsx(
+          inter.variable,
+          montserrat.variable,
+          jua.variable,
+          "dark",
+        )}
+      >
         <SessionProvider session={session}>{children}</SessionProvider>
       </body>
     </html>
