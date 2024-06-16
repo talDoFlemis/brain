@@ -1,15 +1,15 @@
-import NextAuth, { NextAuthOptions } from "next-auth";
-import Credentials from "next-auth/providers/credentials";
 import authService from "@/services/auth-service";
+import { NEXT_AUTH_SECRET } from "@/utils/constants";
 import {
   handleSignIn,
   handleTokenRefreshment,
   isTokenExpired,
 } from "@/utils/token";
 import { isAxiosError } from "axios";
-import { NEXT_AUTH_SECRET } from "@/utils/constants";
+import NextAuth, { NextAuthConfig } from "next-auth";
+import Credentials from "next-auth/providers/credentials";
 
-export const authOptions: NextAuthOptions = {
+export const authConfig: NextAuthConfig = {
   providers: [
     Credentials({
       credentials: {
@@ -21,8 +21,8 @@ export const authOptions: NextAuthOptions = {
 
         try {
           const response = await authService.signIn({
-            username: credentials.username,
-            password: credentials.password,
+            username: credentials.username as string,
+            password: credentials.password as string,
           });
 
           return response;
@@ -67,4 +67,4 @@ export const authOptions: NextAuthOptions = {
   },
 };
 
-export const handler = NextAuth(authOptions);
+export const { auth, handlers, signIn, signOut } = NextAuth(authConfig);

@@ -1,10 +1,9 @@
 import type { Metadata } from "next";
 import { Inter, Jua, Montserrat } from "next/font/google";
 import "../styles/globals.css";
-import SessionProvider from "@/components/layout/SessionProvider";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/providers/auth";
 import clsx from "clsx";
+import { SessionProvider } from "next-auth/react";
+import { Session } from "next-auth";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -31,11 +30,11 @@ export const metadata: Metadata = {
 
 export default async function RootLayout({
   children,
+  params: { session, ...params },
 }: Readonly<{
   children: React.ReactNode;
+  params: { session: Session };
 }>) {
-  const session = await getServerSession(authOptions);
-
   return (
     <html lang="en">
       <body className={clsx(inter.variable, montserrat.variable, jua.variable)}>
