@@ -1,21 +1,9 @@
 import apiProvider from "@/providers/api-provider";
-
-export type Game = {
-  id: string;
-  title: string;
-  description: string;
-  owner_id: string;
-  // TODO: Type each kind of question
-  questions: any[];
-};
-
-export type GetGamesByUserResponse = {
-  games: Game[];
-};
-
-export type GetGameByIdResponse = {
-  game: Game;
-};
+import {
+  CreateGameRequest,
+  GetGameByIdResponse,
+  GetGamesByUserResponse,
+} from "./types";
 
 const getGamesByUser = async (
   access_token: string,
@@ -56,9 +44,26 @@ const getGameById = async (
   }
 };
 
+const createGame = async (
+  request: CreateGameRequest,
+  access_token: string,
+): Promise<boolean> => {
+  try {
+    await apiProvider.usePost<string, CreateGameRequest>(`/game/`, request, {
+      headers: {
+        Authorization: `Bearer ${access_token}`,
+      },
+    });
+    return true;
+  } catch (error) {
+    throw error;
+  }
+};
+
 const gameService = {
   getGamesByUser,
   getGameById,
+  createGame,
 };
 
 export default gameService;

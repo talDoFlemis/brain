@@ -2,9 +2,10 @@
 
 import { useEffect, useState } from "react";
 import { QuizCard } from "./quiz-card";
-import gameService, { Game } from "@/services/game-service";
 import useSessionWithRefresh from "@/hooks/useSessionWithRefresh";
 import Loading from "@/components/common/Loading";
+import { Game } from "@/services/game/types";
+import gameService from "@/services/game/service";
 
 function CreateQuizesSection() {
   const [games, setGames] = useState<Game[]>([]);
