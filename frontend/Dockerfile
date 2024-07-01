@@ -19,6 +19,7 @@ COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
 ENV NEXT_TELEMETRY_DISABLED 1
+ARG NEXT_PUBLIC_BACKEND_API_URL=https://brain-api.flemis.cloud
 
 RUN \
   if [ -f yarn.lock ]; then yarn run build; \
