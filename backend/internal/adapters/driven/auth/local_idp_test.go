@@ -9,6 +9,7 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
+	testcontainers "github.com/testcontainers/testcontainers-go/modules/postgres"
 
 	"github.com/taldoflemis/brain.test/internal/adapters/driven/postgres"
 	"github.com/taldoflemis/brain.test/internal/ports"
@@ -31,7 +32,7 @@ var (
 
 type LocalIDPTestSuite struct {
 	suite.Suite
-	pgContainer *testshelpers.PostgresContainer
+	pgContainer *testcontainers.PostgresContainer
 	ctx         context.Context
 	svc         *localIDP
 	repo        *postgres.LocalIDPPostgresStorer
@@ -40,17 +41,14 @@ type LocalIDPTestSuite struct {
 
 func (suite *LocalIDPTestSuite) SetupSuite() {
 	suite.ctx = context.Background()
-	pgContainer, err := testshelpers.CreatePostgresContainer(suite.ctx)
+	pgContainer, pool, err := testshelpers.CreatePostgresContainerAndMigrate(
+		suite.ctx,
+		"../postgres/migrations/",
+	)
 	if err != nil {
 		log.Fatal(err)
 	}
 	suite.pgContainer = pgContainer
-	pool, err := postgres.NewPool(pgContainer.ConnStr)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	postgres.Migrate(pgContainer.ConnStr, "../postgres/migrations/")
 
 	repository := postgres.NewLocalIDPPostgresStorer(pool)
 	logger := testshelpers.NewDummyLogger(log.Writer())
