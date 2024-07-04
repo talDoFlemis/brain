@@ -37,7 +37,7 @@ type CreateQuizQuestionRequest struct {
 	TimeLimit    int    `json:"time_limit"   validate:"required"`
 	Alternatives []struct {
 		Data      string `json:"data" validate:"required"`
-		IsCorrect bool   `json:"is_correct" validate:"required"`
+		IsCorrect bool   `json:"is_correct"`
 	} `json:"alternatives" validate:"required,dive,required"`
 }
 

@@ -1,3 +1,5 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
 import { IoListOutline } from "react-icons/io5";
@@ -8,12 +10,13 @@ import { ReactNode } from "react";
 import { LuBrainCircuit } from "react-icons/lu";
 import { IconType } from "react-icons/lib";
 import { cn } from "@/lib/utils";
+import { usePathname } from "next/navigation";
 
 type SidebarLinkProps = {
   href: string;
   Icon: IconType;
   text: ReactNode;
-  active: boolean;
+  currentPathname: string;
 };
 
 function LinkContainer({ children }: { children: ReactNode }) {
@@ -24,7 +27,8 @@ function LinkContainer({ children }: { children: ReactNode }) {
   );
 }
 
-function SidebarLink({ href, Icon, text, active }: SidebarLinkProps) {
+function SidebarLink({ href, Icon, text, currentPathname }: SidebarLinkProps) {
+  const active = href === currentPathname;
   return (
     <Link
       className={cn(
@@ -40,6 +44,7 @@ function SidebarLink({ href, Icon, text, active }: SidebarLinkProps) {
 }
 
 function Sidebar() {
+  const pathname = usePathname();
   return (
     <aside className="flex flex-col h-full gap-2 w-96 p-6">
       <div className="flex items-center gap-2 w-full bg-foreground p-6 rounded-lg justify-center">
@@ -55,24 +60,29 @@ function Sidebar() {
       </div>
       <LinkContainer>
         <SidebarLink
-          href="#"
-          active={true}
+          href="/dashboard"
+          currentPathname={pathname}
           Icon={IoListOutline}
           text="Quizzes criados"
         />
         <SidebarLink
-          href="#"
-          active={false}
+          href="/dashboard/played"
+          currentPathname={pathname}
           Icon={IoMdCheckmarkCircleOutline}
           text="Quizzes jogados"
         />
       </LinkContainer>
 
       <LinkContainer>
-        <SidebarLink href="#" active={false} Icon={FaPlus} text="Criar Quiz" />
+        <SidebarLink
+          href="/dashboard/create-quiz"
+          currentPathname={pathname}
+          Icon={FaPlus}
+          text="Criar Quiz"
+        />
         <SidebarLink
           href="#"
-          active={false}
+          currentPathname={pathname}
           Icon={LuBrainCircuit}
           text={
             <>
@@ -85,7 +95,7 @@ function Sidebar() {
       <LinkContainer>
         <SidebarLink
           href="#"
-          active={false}
+          currentPathname={pathname}
           Icon={FaPlay}
           text="Entrar na sessão"
         />
